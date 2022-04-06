@@ -1,0 +1,4 @@
+enum CekSenetTuru{
+
+  cek,senet
+}
