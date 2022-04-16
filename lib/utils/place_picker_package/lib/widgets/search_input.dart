@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cari_hesapp_lite/constants/constants.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:flutter/material.dart';
 
 /// Custom Search input field, showing the search and clear icons.
@@ -14,11 +13,16 @@ class SearchInput extends StatefulWidget {
   VoidCallback? leadIconPressed;
   IconData leadIcon;
 
+  final Widget hasSearchEntryIcon;
+
   SearchInput(this.onSearchInput,
-      {this.initialSearchWord,
+      {Key? key,
+      this.initialSearchWord,
       this.hintText = "Arayınız..",
       this.leadIconPressed,
-      this.leadIcon = Icons.search});
+      this.leadIcon = Icons.search,
+      this.hasSearchEntryIcon = const Icon(Icons.clear)})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => SearchInputState();
@@ -31,6 +35,8 @@ class SearchInputState extends State<SearchInput> {
 
   bool hasSearchEntry = false;
 
+  Widget get hasSearchEntryIcon => widget.hasSearchEntryIcon;
+
   String? get stringComes => widget.initialSearchWord;
 
   SearchInputState();
@@ -38,33 +44,31 @@ class SearchInputState extends State<SearchInput> {
   @override
   void initState() {
     super.initState();
-    this.editController.addListener(this.onSearchInputChange);
-    bas("stringComes");
-    bas(stringComes);
+    editController.addListener(onSearchInputChange);
     if (stringComes != null) editController.text = stringComes!;
   }
 
   @override
   void dispose() {
-    this.editController.removeListener(this.onSearchInputChange);
-    this.editController.dispose();
+    editController.removeListener(onSearchInputChange);
+    editController.dispose();
 
     super.dispose();
   }
 
   void onSearchInputChange() {
-    if (this.editController.text.isEmpty) {
-      this.debouncer?.cancel();
-      widget.onSearchInput(this.editController.text);
+    if (editController.text.isEmpty) {
+      debouncer?.cancel();
+      widget.onSearchInput(editController.text);
       return;
     }
 
-    if (this.debouncer?.isActive ?? false) {
-      this.debouncer?.cancel();
+    if (debouncer?.isActive ?? false) {
+      debouncer?.cancel();
     }
 
-    this.debouncer = Timer(Duration(milliseconds: 500), () {
-      widget.onSearchInput(this.editController.text);
+    debouncer = Timer(const Duration(milliseconds: 500), () {
+      widget.onSearchInput(editController.text);
     });
   }
 
@@ -85,22 +89,22 @@ class SearchInputState extends State<SearchInput> {
             child: TextField(
               decoration: InputDecoration(
                   hintText: widget.hintText, border: InputBorder.none),
-              controller: this.editController,
+              controller: editController,
               onChanged: (value) {
                 setState(() {
-                  this.hasSearchEntry = value.isNotEmpty;
+                  hasSearchEntry = value.isNotEmpty;
                 });
               },
             ),
           ),
           const SizedBox(width: 8),
-          if (this.hasSearchEntry)
+          if (hasSearchEntry)
             GestureDetector(
-              child: const Icon(Icons.clear),
+              child: hasSearchEntryIcon,
               onTap: () {
-                this.editController.clear();
+                editController.clear();
                 setState(() {
-                  this.hasSearchEntry = false;
+                  hasSearchEntry = false;
                 });
               },
             ),

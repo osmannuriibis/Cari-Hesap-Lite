@@ -1,13 +1,10 @@
 import 'dart:async';
 
-import 'package:cari_hesapp_lite/enums/kullanici_yetki_turu.dart';
-import 'package:cari_hesapp_lite/enums/shared_values.dart';
 import 'package:cari_hesapp_lite/models/sirket_model.dart';
 import 'package:cari_hesapp_lite/models/user_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/service/database_service.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/services/shared/shared_service.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/mapper_from_type/mapper.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
@@ -17,13 +14,9 @@ import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
   String? _sirketId;
-  late KullaniciYetkiTuru _yetki;
-  var _auth = AuthService();
+  final _auth = AuthService();
 
-  SirketModel? _sirketModel;
-  SirketModel? get sirketModel => _sirketModel;
-
-  set sirketModel(SirketModel? value) => _sirketModel = value;
+  SirketModel? sirketModel;
 
   UserModel? userModel;
 
@@ -55,12 +48,13 @@ class UserProvider extends ChangeNotifier {
       [String? setId]) async {
     UserModel? _userModel;
     SirketModel? _sirketModel;
-    
+
     var userRef =
         dbInstance.collection("users").doc(AuthService().currentUserId);
 
     _userModel = await userRef.get().then((value) {
-  
+      bas("value.data()");
+      bas(value.data());
       if (((value.data())?.length ?? 0) == 0) {
         return null;
       }
@@ -69,20 +63,28 @@ class UserProvider extends ChangeNotifier {
       }
     });
 
-    _sirketModel =
-        await userRef.collection("sirketler").get().then((value) async {
-      _sirketId = (value.docs.isNotEmpty) ? value.docs.first.id : null;
+    try {
+      _sirketModel =
+          await userRef.collection("sirketler").get().then((value) async {
+        _sirketId = (value.docs.isNotEmpty) ? value.docs.first.id : null;
 
-      return await dbInstance
-          .collection(DBService().getClassColPath(SirketModel))
-          .doc(_sirketId)
-          .get()
-          .then((value) {
-        if (value.data() == null) return sirketModel = null;
-        return sirketModel = SirketModel.fromMap(value.data()!);
+        return await dbInstance
+            .collection(DBService().getClassColPath(SirketModel))
+            .doc(_sirketId)
+            .get()
+            .then((value) {
+          if (value.data() == null) return sirketModel = null;
+          return sirketModel = SirketModel.fromMap(value.data()!);
+        });
       });
-    });
-    
+    } on FirebaseException catch (e) {
+      bas("e.code");
+      bas(e.code);
+      bas(e.message);
+    }
+    bas("_userModel");
+
+    bas(_userModel);
     return MapEntry(_userModel, _sirketModel);
   }
 
@@ -93,15 +95,12 @@ class UserProvider extends ChangeNotifier {
       return;
     }
 
-    FirebaseAuth.instance.idTokenChanges().listen((event) {
-  
-    });
+    FirebaseAuth.instance.idTokenChanges().listen((event) {});
 
     dbInstance.collection("users").doc(_user.uid).snapshots().listen((event) {
       if (event.data() != null) {
-      
         userModel = UserModel.fromMap(event.data()!);
-      
+
         if ((userModel?.adi?.isNotEmptyOrNull ?? false) &&
             (userModel?.soyadi?.isNotEmptyOrNull ?? false)) {
           _auth.currentUser!.updateDisplayName(
@@ -114,10 +113,7 @@ class UserProvider extends ChangeNotifier {
     });
 
     FirebaseAuth.instance.userChanges().listen((event) {
-    
-
       if (event?.email != null) {
-      
         DBUtils().updateUserField(event!.uid, "email", event.email!);
       }
     });

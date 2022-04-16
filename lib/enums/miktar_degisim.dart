@@ -1,0 +1,1 @@
+enum Degisim { artir, azalt }

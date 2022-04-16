@@ -28,7 +28,8 @@ class CustomAlertDialog extends StatelessWidget {
       contentPadding: contentPadding,
       actions: actions,
       insetPadding:insetPadding as EdgeInsets ,
-      content: content,
+      content: content,actionsOverflowDirection: VerticalDirection.down,
+      
       actionsPadding: actionsPadding,
       scrollable: scrollable,
       title: title != null

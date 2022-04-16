@@ -3,15 +3,8 @@ import 'package:cari_hesapp_lite/components/appbar/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../components/dialogs/bu_nedir_dialog.dart';
-import '../../../../components/dialogs/show_alert_dialog.dart';
-import '../../../../components/fsal/special_firebase_list.dart';
-import '../../../../enums/bu_nedir.dart';
 import '../../../../services/firebase/database/utils/database_utils.dart';
 import '../../../../utils/extensions.dart';
-import '../../../../utils/print.dart';
-import '../../../../views/cari/cari_add_view/cari_add_view_model/components/each_row_text_field.dart';
 
 import '../../../components/buttons/base_primary_button.dart';
 import '../../../components/dialogs/alert_with_firebase_list.dart';
@@ -21,6 +14,7 @@ import '../../../models/bilgiler/bilgiler.dart';
 import '../../../utils/general.dart';
 import '../../../utils/num_input_formatter.dart';
 import '../../../utils/validator.dart';
+import '../../cari/cari_add_view/components/each_row_text_field.dart';
 import 'view_model/stok_add_view_model.dart';
 
 class StokAddView extends StatelessWidget with Validator {

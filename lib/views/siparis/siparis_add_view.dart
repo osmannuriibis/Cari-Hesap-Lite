@@ -13,7 +13,6 @@ import '../../components/text_fields/base_form_field.dart';
 import '../../components/text_fields/my_field_with_label.dart';
 import '../../enums/cari_islem_turu.dart';
 import '../../models/kartlar/stok_kart.dart';
-import '../../utils/print.dart';
 import '../../utils/view_route_util.dart';
 import '../../views/stok/stok_list_view/stok_liste_view.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +53,7 @@ class SiparisAddView extends StatelessWidget {
               suffixText: viewModel.birim,
               onTap1: () async {
                 var stokKart = await goToView<StokKart, StokViewModel>(context,
-                    viewToGo: StokListView());
+                    viewToGo: const StokListView());
                 if (stokKart != null) {
                   viewModel.selectStok(stokKart);
                 }
@@ -175,7 +174,6 @@ class SiparisAddView extends StatelessWidget {
                         context,
                       );
                 }
-                bas(viewModel.siparis.toString());
               },
               buttonText: "Siparisi Kaydet"),
           /*    TextButton(

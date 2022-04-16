@@ -82,7 +82,7 @@ class DBService {
 
  else if (T == DenemeModel) {
       return _getTablesPath + _denemePath;
-    } else if (T == HesapHareket) {
+    } else if (T == HesapHareketModel) {
       return _getTablesPath + _hesapHareketPath;
     }  else if (T == SiparisModel) {
       return _getTablesPath + _siparisler;

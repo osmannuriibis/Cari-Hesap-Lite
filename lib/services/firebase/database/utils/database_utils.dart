@@ -1,23 +1,17 @@
 import 'dart:async';
-import 'package:cari_hesapp_lite/enums/cari_turu.dart';
 import 'package:cari_hesapp_lite/models/sirket_model.dart';
 import 'package:cari_hesapp_lite/models/user_model.dart';
-import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
-import 'package:cari_hesapp_lite/utils/catch.dart';
 import 'package:cari_hesapp_lite/utils/mapper_from_type/mapper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
 import 'package:cari_hesapp_lite/models/base_model/base_model.dart';
 import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/kartlar/cari_kart.dart';
 import 'package:cari_hesapp_lite/models/kartlar/stok_kart.dart';
-import 'package:cari_hesapp_lite/services/firebase/database/enum/miktar_degisim.dart';
+import 'package:cari_hesapp_lite/enums/miktar_degisim.dart';
 
 import 'package:cari_hesapp_lite/services/firebase/database/service/database_service.dart';
 
 import 'package:cari_hesapp_lite/utils/extensions.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:flutter/material.dart';
 
 class DBUtils {
   var dbService = DBService();
@@ -83,7 +77,6 @@ class DBUtils {
 
     var ref = getModelReference<T>(map['id']);
     batch.set(ref, map);
-    bas("batch" * 10);
     return batch.commit().getBoolResultForFirebase();
     /* .set(
           map,
@@ -231,27 +224,30 @@ class DBUtils {
         streamController.add(list);
       },
       onDone: () {
-        bas("getModelListAsStream Listen => WAS DONE", this);
       },
     );
     return streamController.stream;
   }
 
+  ///@param [filterList] definition: MapEntry<MapEntry<"field","value">, "equality">
+
   StreamSubscription<List<T>> Function(void Function(List<T> event)? onData,
       {bool? cancelOnError,
       void Function()? onDone,
-      Function? onError}) getModelListAsStream<T extends BaseModel>([
-    List<MapEntry<Object, Object>>? filterList,
-  ]) {
+      Function?
+          onError}) getModelListAsStream<T extends BaseModel>(
+      [List<MapEntry<MapEntry<Object, Object>, FirestoreClause>>? filterList,
+      ]) {
+
     var list = <T>[];
     var ref = DBUtils().getClassReference<T>();
-    bas("bu metod");
 
     Query<Map<String, dynamic>>? query;
 
     if (filterList != null) {
       for (var item in filterList) {
-        query = (query ?? ref).where(item.key, isEqualTo: item.value);
+        query =
+            (query ?? ref).whereJust(item.key.key, item.value, item.key.value);
       }
     } else {
       query = null;
@@ -260,9 +256,7 @@ class DBUtils {
     return (query ?? ref)
             .snapshots()
             .asyncMap((e) => e.docs.map((e) {
-                  bas("e.metadata.isFromCache");
 
-                  bas(e.metadata.isFromCache);
                   return Mapper.fromMap<T>(e.data());
                 }).toList())
             .listen /* ((event) {
@@ -311,8 +305,6 @@ class DBUtils {
     //  T? model;
     return getModelReference<T>(modelId).snapshots().asyncMap((event) {
       if (event.data() != null) {
-        bas("async Map" * 15);
-        bas(Mapper.fromMap<T>(event.data()!));
         return Mapper.fromMap<T>(event.data()!);
       }
       return null;
@@ -358,5 +350,44 @@ class DBUtils {
   CollectionReference<Map<String, dynamic>> getUserClassReferenceUnderSirket(
       String sirketId) {
     return getModelReference<SirketModel>(sirketId).collection("users");
+  }
+}
+
+enum FirestoreClause {
+  isEqualTo,
+  isNotEqualTo,
+  isLessThan,
+  isLessThanOrEqualTo,
+  isGreaterThan,
+  isGreaterThanOrEqualTo,
+  arrayContains,
+}
+
+extension WhereClause<T extends Object> on Query<T> {
+  Query<T> whereJust(Object field, FirestoreClause equality, Object? value) {
+    switch (equality) {
+      case FirestoreClause.arrayContains:
+        return where(field, arrayContains: value);
+
+      case FirestoreClause.isEqualTo:
+        return where(field, isEqualTo: value);
+
+      case FirestoreClause.isGreaterThan:
+        return where(field, isGreaterThan: value);
+
+      case FirestoreClause.isGreaterThanOrEqualTo:
+        return where(field, isGreaterThanOrEqualTo: value);
+
+      case FirestoreClause.isLessThan:
+        return where(field, isLessThan: value);
+
+      case FirestoreClause.isLessThanOrEqualTo:
+        return where(field, isLessThanOrEqualTo: value);
+
+      case FirestoreClause.isNotEqualTo:
+        return where(field, isNotEqualTo: value);
+      default:
+        throw Exception("FirestoreJustify value is Null ");
+    }
   }
 }

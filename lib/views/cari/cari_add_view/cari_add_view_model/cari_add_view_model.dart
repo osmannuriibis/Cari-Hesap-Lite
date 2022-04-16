@@ -30,10 +30,11 @@ class CariAddViewModel extends ChangeNotifier {
   var konumService = KonumService();
 
   Konum? _konum;
-  Konum get konum =>
-      this._konum ?? Konum.fromPosition(konumService.lastLocation);
 
-  set konum(Konum value) => this._konum = value;
+  Konum get konum =>
+      _konum ?? Konum.fromPosition(konumService.lastLocation);
+
+  set konum(Konum value) => _konum = value;
 
   // var controllerCariGrup = TextEditingController();
 
@@ -79,9 +80,7 @@ class CariAddViewModel extends ChangeNotifier {
   }
 
   CariAddViewModel.addNewCari(this._cariTuru) {
-    bas("AddCariVİewMOdel constructor");
-    this.isNewAdding = true;
-    bas(isNewAdding);
+    isNewAdding = true;
     _cariKart = CariKart();
 
     init();
@@ -142,14 +141,8 @@ class CariAddViewModel extends ChangeNotifier {
 
   String selectedSehirId = "";
 
-  bool _readOnlyIlce = true;
-  bool _readOnlySehir = true;
-
-  bool get readOnlySehir => this._readOnlySehir;
-  set readOnlySehir(bool value) => this._readOnlySehir = value;
-
-  bool get readOnlyIlce => this._readOnlyIlce;
-  set readOnlyIlce(bool value) => this._readOnlyIlce = value;
+  bool readOnlyIlce = true;
+  bool readOnlySehir = true;
 
 /////////////       \   /
 /////////////        \ /
@@ -162,7 +155,7 @@ class CariAddViewModel extends ChangeNotifier {
 /////////////        \ /
 /////////////         V
   void bakiyeOnChanced(String? value) {
-    isSwitchDisable = value != null
+    isSwitchDisable = (value != null)
         ? ((value != "")
             ? (num.tryParse(value) != 0)
                 ? false
@@ -243,19 +236,13 @@ class CariAddViewModel extends ChangeNotifier {
 
   Future<bool> addCariGrup() async {
     if (controllerCariGrupDialog.text.trim().isNotEmpty) {
-      bas("fonksiyona girdi");
       var text = controllerCariGrupDialog.text.trim().toCapitalize();
-      bas(text);
       var doc = dbutil.getModelReference<Bilgiler>(Bilgiler.cariGrup);
-      bas("doc.path");
-      bas(doc.path);
       return await doc
           .set({text: text}, SetOptions(merge: true)).then<bool>((value) {
         controllerCariGrupDialog.text = "";
         return true;
       }).onError((error, stackTrace) {
-        bas("error");
-        bas(error);
         return false;
       });
 
@@ -282,10 +269,8 @@ class CariAddViewModel extends ChangeNotifier {
 /////////////         V
 
   Future<String?> save() async {
-    bas("validate degeri: ${formKey.currentState!.validate()}");
     if (formKey.currentState!.validate() && controllerUnvani.text.length > 3) {
       modeliHazirla();
-      bas("yazmaya hazır cari model: " + cariKart.toString());
 
       return await modeliYaz();
     } else {
@@ -328,8 +313,6 @@ class CariAddViewModel extends ChangeNotifier {
   }
 
   void init() {
-    bas("if (KonumService().lastLocation != null)");
-    bas(KonumService().lastLocation);
 
     if (KonumService().lastLocation != null) {
       konum = Konum.fromPosition(KonumService().lastLocation);
@@ -343,6 +326,9 @@ class CariAddViewModel extends ChangeNotifier {
     controllerIlce.text =
         value.administrativeAreaLevel2?.name?.toUpperCase() ?? "";
     konum = Konum.fromLatLng(value.latLng, isCertain: true);
-    bas(konum.toMap());
   }
+
+  notify() =>
+    notifyListeners();
+  
 }

@@ -1,9 +1,7 @@
 import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
-import 'package:cari_hesapp_lite/services/firebase/database/enum/miktar_degisim.dart';
+import 'package:cari_hesapp_lite/enums/miktar_degisim.dart';
 import 'package:cari_hesapp_lite/utils/catch.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/utils/extensions.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../enums/gelir_gider_turu.dart';
@@ -12,9 +10,7 @@ import '../../../models/cari_islem.dart';
 import '../../../models/kartlar/cari_kart.dart';
 import '../../../models/hesap_hareket.dart';
 
-import '../../../models/islemler_model.dart';
 import '../../../services/firebase/auth/service/auth_service.dart';
-import '../../../services/firebase/database/service/database_service.dart';
 import '../../../utils/date_format.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +19,7 @@ class AccountTransactionAddViewModel extends ChangeNotifier {
   CariKart? cariKart;
   late GelirGiderTuru gelirGiderTuru;
 
-  late HesapHareket model;
+  late HesapHareketModel model;
   late DBUtils dbutil;
 
   CariIslemModel? sonCariIslem;
@@ -57,7 +53,7 @@ class AccountTransactionAddViewModel extends ChangeNotifier {
   }) {
     isNewAdding = true;
     this.hesapHareketTuru = hesapHareketTuru;
-    model = HesapHareket();
+    model = HesapHareketModel();
 
     init();
   }
@@ -105,12 +101,8 @@ class AccountTransactionAddViewModel extends ChangeNotifier {
           .where("islemTuru", isEqualTo: (order))
           .get()
           .then((snapshot) {
-        bas("sonişlem fetch'e girdi");
-        bas(snapshot.docs);
 
         if (snapshot.docs.length != 0) {
-          bas("snapshot null değil");
-          bas(snapshot.docs.last);
           Map<String, dynamic> map = snapshot.docs.last.data();
           sonCariIslem = CariIslemModel.fromMap(map);
           notifyListeners();
@@ -160,9 +152,7 @@ class AccountTransactionAddViewModel extends ChangeNotifier {
         kullaniciId: AuthService().currentUserId,
         toplamTutar: tutar, /* */
       );
-      bas("modeli hazırla sonu");
     } on Exception catch (err) {
-      bas("hata modeli hazırla");
       fetchCatch(err, this);
     }
   }

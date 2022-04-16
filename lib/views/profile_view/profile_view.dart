@@ -18,6 +18,7 @@ import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/profile_view/profile_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -75,7 +76,6 @@ class ProfileView extends StatelessWidget {
                               if (_viewModel.isEditing) _viewModel.saveFields();
 
                               _viewModel.isEditing = !_viewModel.isEditing;
-                              bas(_viewModel.isEditing);
                             },
                       icon: _viewModel.isEditing
                           ? const Icon(Icons.check)
@@ -93,7 +93,7 @@ class ProfileView extends StatelessWidget {
                                 ? Image.network(
                                     user!.photoURL!,
                                   ).image
-                                : defaultImage,
+                                : _viewModel.ppStoragePath() ?? defaultImage,
                             radius: width(context) / 4,
                           ),
                           Positioned(
@@ -113,19 +113,14 @@ class ProfileView extends StatelessWidget {
                                   File? image = await ImageUtil().getImage(
                                     context,
                                   );
-                                  bas("image?.path");
-                                  bas(image?.path);
 
                                   if (image != null) {
                                     var url = await StorageService().setImage(
                                         StorageFolder.users,
                                         _viewModel.userId,
                                         image,
-                                        "pp");
-                                    bas("url - " * 10);
-                                    bas(url);
-                                    bas("user---" * 15);
-                                    bas(user);
+                                        "pp.jpeg");
+                              
 
                                     DBUtils().addOrSetModel(
                                         user!.copyWith(photoURL: url));
@@ -185,7 +180,7 @@ class ProfileView extends StatelessWidget {
                           child: RoundedButton(
                             "Kaydet",
                             onPressed: () async {
-                        await      _viewModel.saveFields();
+                              await _viewModel.saveFields();
                               Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   RouteNames.AuthWrapper.route,
@@ -210,7 +205,6 @@ class ProfileView extends StatelessWidget {
 
   Future<dynamic> _showPassChangeDialog(
       BuildContext context, ProfileViewModel viewModel) {
-    bas(viewModel.isPassVisible);
     return showDialog(
         context: context,
         builder: (context) {
@@ -311,7 +305,6 @@ class _EmailDialog extends StatelessWidget {
                   onPressed: () {
                     viewModel.isPassVisible =
                         viewModel.isPassVisible ? false : true;
-                    bas(viewModel.isPassVisible);
                   },
                   icon: Icon(!viewModel.isPassVisible
                       ? FontAwesomeIcons.eye
@@ -340,8 +333,6 @@ class _EmailDialog extends StatelessWidget {
         TextButton(
             onPressed: () async {
               var result = await viewModel.changeEmail();
-              bas("change email result");
-              bas(result);
               if (result) {
                 showSnackBar(
                     context: context,
@@ -390,7 +381,6 @@ class _PassDialog extends StatelessWidget {
                     onPressed: () {
                       viewModel.isPassVisible =
                           viewModel.isPassVisible ? false : true;
-                      bas(viewModel.isPassVisible);
                     },
                     icon: Icon(!viewModel.isPassVisible
                         ? FontAwesomeIcons.eye
@@ -427,7 +417,6 @@ class _PassDialog extends StatelessWidget {
         TextButton(
             onPressed: () async {
               var result = await viewModel.changePassword();
-              bas(result);
 
               if (result) {
                 viewModel.removeDialogFields();

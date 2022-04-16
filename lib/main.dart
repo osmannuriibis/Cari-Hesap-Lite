@@ -19,12 +19,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   (await Firebase.initializeApp());
   KonumService();
-  bas("main");
 
-   FirebaseFirestore.instance.settings = const Settings(
-    
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED
-  );
+  FirebaseFirestore.instance.settings =
+      const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
 
   Provider.debugCheckInvalidValueType = null; //TODO what is it?
   runApp(Phoenix(child: const MyApp()));
@@ -37,13 +34,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return MultiProvider(
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
-      /*   StreamProvider<User?>(
+        /*   StreamProvider<User?>(
           initialData: null,
           create: (context) => AuthService().authStateChanges(),
         ), */
@@ -73,6 +67,8 @@ class MyApp extends StatelessWidget {
           RouteNames.AuthWrapper.route: (context) =>
               const AuthenticationWrapper(),
           RouteNames.Deneme.route: (context) => RouteNames.Deneme.view,
+          RouteNames.SignUp.route: (context) => RouteNames.SignUp.view,
+          RouteNames.Login.route: (context) => RouteNames.Login.view,
         },
         initialRoute: RouteNames.AuthWrapper.route,
         debugShowCheckedModeBanner: false,

@@ -1,14 +1,12 @@
 import 'dart:async';
-
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthService extends ChangeNotifier {
-  late FirebaseAuth _auth;
+  late FirebaseAuth auth;
   User? _currentUser;
 
-  User? get currentUser => _currentUser ??= _auth.currentUser;
+  User? get currentUser => _currentUser ??= auth.currentUser;
 
   set currentUser(User? value) {
     _currentUser = value;
@@ -16,7 +14,7 @@ class AuthService extends ChangeNotifier {
   }
 
   AuthService() {
-    _auth = FirebaseAuth.instance;
+    auth = FirebaseAuth.instance;
   } // /* auth ?? */ FirebaseAuth.instance;
 
   String? get currentUserEmail => currentUser?.email;
@@ -33,14 +31,13 @@ class AuthService extends ChangeNotifier {
   Future<UserCredential?> singInWEAP(
       {required String email, required String password}) async {
     try {
-      return await _auth
+      return await auth
           .signInWithEmailAndPassword(
             email: email,
             password: password,
           )
           .then<UserCredential>((user) => user);
     } catch (e) {
-      print(e);
 
       return null;
     }
@@ -49,7 +46,7 @@ class AuthService extends ChangeNotifier {
   Future<UserCredential?> createUserWEAP(
       {required String email, required String password}) async {
     try {
-      return await _auth
+      return await auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((user) => user);
     } catch (e) {
@@ -60,19 +57,18 @@ class AuthService extends ChangeNotifier {
 
   Future<void> sendVerification() {
     
-    return  _auth.currentUser!.sendEmailVerification();
+    return  auth.currentUser!.sendEmailVerification();
     
   }
-  /**/
 
   signOut() async {
-    await _auth.signOut();
+    await auth.signOut();
     notifyListeners();
   }
 
   Future<String?> updatePassword(String newPassword) async {
     String? error;
-    await _auth.currentUser!.updatePassword(newPassword).then((value) {
+    await auth.currentUser!.updatePassword(newPassword).then((value) {
       error = null;
     }).onError((FirebaseAuthException e, stackTrace) {
       error = e.code;
@@ -82,9 +78,7 @@ class AuthService extends ChangeNotifier {
 
   Future<String?> updateEmailVerify(String newEmail) async {
     String? err;
-    bas("newEmail " * 5);
-    bas(newEmail);
-    await _auth.currentUser!
+    await auth.currentUser!
         .verifyBeforeUpdateEmail(
       newEmail,
       /*   ActionCodeSettings(
@@ -106,7 +100,6 @@ class AuthService extends ChangeNotifier {
 
       return userCredential?.user != null ? null : "something-went-wrong";
     } on FirebaseAuthException catch (err) {
-      bas(err.code);
       return err.code;
     }
   }
@@ -115,12 +108,12 @@ class AuthService extends ChangeNotifier {
       {bool? cancelOnError,
       void Function()? onDone,
       Function? onError}) listenUserChanges() {
-    return _auth.userChanges().listen;
+    return auth.userChanges().listen;
   }
 
-  Stream<User?> authStateChanges() => _auth.authStateChanges();
+  Stream<User?> authStateChanges() => auth.authStateChanges();
 
   Future<void> resetPassword(String email) {
-    return _auth.sendPasswordResetEmail(email: email);
+    return auth.sendPasswordResetEmail(email: email);
   }
 }

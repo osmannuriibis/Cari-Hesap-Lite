@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cari_hesapp_lite/utils/place_picker_package/lib/entities/localization_item.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -30,12 +28,10 @@ class PlacePicker extends StatefulWidget {
   LocalizationItem? localizationItem;
 
   PlacePicker(this.apiKey,
-      {this.displayLocation,
+      {Key? key, this.displayLocation,
       this.localizationItem,
-      this.initialSearchWord = ""}) {
-    if (this.localizationItem == null) {
-      this.localizationItem = new LocalizationItem();
-    }
+      this.initialSearchWord = ""}) : super(key: key) {
+    localizationItem ??= LocalizationItem();
   }
 
   @override
@@ -70,13 +66,13 @@ class PlacePickerState extends State<PlacePicker> {
   PlacePickerState();
 
   void onMapCreated(GoogleMapController controller) {
-    this.mapController.complete(controller);
+    mapController.complete(controller);
     moveToCurrentUserLocation();
   }
 
   @override
   void setState(fn) {
-    if (this.mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -85,23 +81,22 @@ class PlacePickerState extends State<PlacePicker> {
   void initState() {
     super.initState();
     markers.add(Marker(
-      position: widget.displayLocation ?? LatLng(5.6037, 0.1870),
-      markerId: MarkerId("selected-location"),
+      position: widget.displayLocation ?? const LatLng(5.6037, 0.1870),
+      markerId: const MarkerId("selected-location"),
     ));
   }
 
   @override
   void dispose() {
-    this.overlayEntry?.remove();
+    overlayEntry?.remove();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    bas(widget.initialSearchWord);
     return Scaffold(
       appBar: AppBar(
-        key: this.appBarKey,
+        key: appBarKey,
         title: SearchInput(searchPlace,
             initialSearchWord: widget.initialSearchWord),
         centerTitle: true,
@@ -112,7 +107,7 @@ class PlacePickerState extends State<PlacePicker> {
           Expanded(
             child: GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: widget.displayLocation ?? LatLng(5.6037, 0.1870),
+                target: widget.displayLocation ?? const LatLng(5.6037, 0.1870),
                 zoom: 15,
               ),
               myLocationButtonEnabled: true,
@@ -132,21 +127,21 @@ class PlacePickerState extends State<PlacePicker> {
               markers: markers,
             ),
           ),
-          !this.hasSearchTerm
+          !hasSearchTerm
               ? Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SelectPlaceAction(
                           getLocationName(),
-                          () => Navigator.of(context).pop(this.locationResult),
+                          () => Navigator.of(context).pop(locationResult),
                           widget.localizationItem!.tapToSelectLocation),
                       const Divider(height: 8),
                       Padding(
                         child: Text(widget.localizationItem!.nearBy,
-                            style: TextStyle(fontSize: 16)),
+                            style: const TextStyle(fontSize: 16)),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                            const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                       ),
                       Expanded(
                         child: ListView(
@@ -167,9 +162,9 @@ class PlacePickerState extends State<PlacePicker> {
 
   /// Hides the autocomplete overlay
   void clearOverlay() {
-    if (this.overlayEntry != null) {
-      this.overlayEntry!.remove();
-      this.overlayEntry = null;
+    if (overlayEntry != null) {
+      overlayEntry!.remove();
+      overlayEntry = null;
     }
   }
 
@@ -180,7 +175,7 @@ class PlacePickerState extends State<PlacePicker> {
   void searchPlace(String place) {
     // on keyboard dismissal, the search was being triggered again
     // this is to cap that.
-    if (place == this.previousSearchTerm) {
+    if (place == previousSearchTerm) {
       return;
     }
 
@@ -204,26 +199,26 @@ class PlacePickerState extends State<PlacePicker> {
     final size = renderBox.size;
 
     final RenderBox appBarBox =
-        this.appBarKey.currentContext!.findRenderObject() as RenderBox;
+        appBarKey.currentContext!.findRenderObject() as RenderBox;
 
-    this.overlayEntry = OverlayEntry(
+    overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: appBarBox.size.height,
         width: size.width,
         child: Material(
           elevation: 1,
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
             child: Row(
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                     height: 24,
                     width: 24,
                     child: CircularProgressIndicator(strokeWidth: 3)),
-                SizedBox(width: 24),
+                const SizedBox(width: 24),
                 Expanded(
                     child: Text(widget.localizationItem!.findingPlace,
-                        style: TextStyle(fontSize: 16)))
+                        style: const TextStyle(fontSize: 16)))
               ],
             ),
           ),
@@ -231,7 +226,7 @@ class PlacePickerState extends State<PlacePicker> {
       ),
     );
 
-    Overlay.of(context)!.insert(this.overlayEntry!);
+    Overlay.of(context)!.insert(overlayEntry!);
 
     autoCompleteSearch(place);
   }
@@ -245,11 +240,11 @@ class PlacePickerState extends State<PlacePicker> {
           "https://maps.googleapis.com/maps/api/place/autocomplete/json?"
           "key=${widget.apiKey}&"
           "language=${widget.localizationItem!.languageCode}&"
-          "input={$place}&sessiontoken=${this.sessionToken}";
+          "input={$place}&sessiontoken=${sessionToken}";
 
-      if (this.locationResult != null) {
-        endpoint += "&location=${this.locationResult!.latLng!.latitude}," +
-            "${this.locationResult!.latLng!.longitude}";
+      if (locationResult != null) {
+        endpoint += "&location=${locationResult!.latLng!.latitude}," +
+            "${locationResult!.latLng!.longitude}";
       }
 
       final response = await http.get(Uri.parse(endpoint));
@@ -333,11 +328,11 @@ class PlacePickerState extends State<PlacePicker> {
     Size size = renderBox.size;
 
     final RenderBox appBarBox =
-        this.appBarKey.currentContext!.findRenderObject() as RenderBox;
+        appBarKey.currentContext!.findRenderObject() as RenderBox;
 
     clearOverlay();
 
-    this.overlayEntry = OverlayEntry(
+    overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         width: size.width,
         top: appBarBox.size.height,
@@ -345,7 +340,7 @@ class PlacePickerState extends State<PlacePicker> {
       ),
     );
 
-    Overlay.of(context)!.insert(this.overlayEntry!);
+    Overlay.of(context)!.insert(overlayEntry!);
   }
 
   /// Utility function to get clean readable name of a location. First checks
@@ -354,19 +349,19 @@ class PlacePickerState extends State<PlacePicker> {
   /// result, instead of road name). If no name is found from the nearby list,
   /// then the road name returned is used instead.
   String getLocationName() {
-    if (this.locationResult == null) {
+    if (locationResult == null) {
       return widget.localizationItem!.unnamedLocation;
     }
 
-    for (NearbyPlace np in this.nearbyPlaces) {
-      if (np.latLng == this.locationResult!.latLng &&
-          np.name != this.locationResult!.locality) {
-        this.locationResult!.name = np.name;
-        return "${np.name}, ${this.locationResult!.locality}";
+    for (NearbyPlace np in nearbyPlaces) {
+      if (np.latLng == locationResult!.latLng &&
+          np.name != locationResult!.locality) {
+        locationResult!.name = np.name;
+        return "${np.name}, ${locationResult!.locality}";
       }
     }
 
-    return "${this.locationResult!.name}, ${this.locationResult!.locality}";
+    return "${locationResult!.name}, ${locationResult!.locality}";
   }
 
   /// Moves the marker to the indicated lat,lng
@@ -375,7 +370,7 @@ class PlacePickerState extends State<PlacePicker> {
     setState(() {
       markers.clear();
       markers.add(
-          Marker(markerId: MarkerId("selected-location"), position: latLng));
+          Marker(markerId: const MarkerId("selected-location"), position: latLng));
     });
   }
 
@@ -399,7 +394,7 @@ class PlacePickerState extends State<PlacePicker> {
         throw Error();
       }
 
-      this.nearbyPlaces.clear();
+      nearbyPlaces.clear();
 
       for (Map<String, dynamic> item in responseJson['results']) {
         final nearbyPlace = NearbyPlace()
@@ -408,13 +403,13 @@ class PlacePickerState extends State<PlacePicker> {
           ..latLng = LatLng(item['geometry']['location']['lat'],
               item['geometry']['location']['lng']);
 
-        this.nearbyPlaces.add(nearbyPlace);
+        nearbyPlaces.add(nearbyPlace);
       }
 
       // to update the nearby places
       setState(() {
         // this is to require the result to show
-        this.hasSearchTerm = false;
+        hasSearchTerm = false;
       });
     } catch (e) {
       //
@@ -498,7 +493,7 @@ class PlacePickerState extends State<PlacePicker> {
         }
         locality = locality ?? administrativeAreaLevel1;
         city = locality;
-        this.locationResult = LocationResult()
+        locationResult = LocationResult()
           ..name = name
           ..locality = locality
           ..latLng = latLng
@@ -526,7 +521,7 @@ class PlacePickerState extends State<PlacePicker> {
   /// Moves the camera to the provided location and updates other UI features to
   /// match the location.
   void moveToLocation(LatLng latLng) {
-    this.mapController.future.then((controller) {
+    mapController.future.then((controller) {
       controller.animateCamera(
         CameraUpdate.newCameraPosition(
             CameraPosition(target: latLng, zoom: 15.0)),
@@ -551,7 +546,6 @@ class PlacePickerState extends State<PlacePicker> {
       moveToLocation(target);
     }).catchError((error) {
       // TODO: Handle the exception here
-      print(error);
     });
   }
 }

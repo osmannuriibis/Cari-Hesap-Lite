@@ -59,7 +59,7 @@ class AddHareketInTransViewModel extends ChangeNotifier {
 
     stokHareket.cariIslemKodu = cariIslemKodu = cariIslem!.islemKodu!;
 
-    bas(getStokFiyatByIslemTuru(cariIslemTuru));
+    getStokFiyatByIslemTuru(cariIslemTuru);
     // lastTransValue =>
 
     // if (stokKart != null) getBirimFiyatInitialText();
@@ -276,8 +276,6 @@ class AddHareketInTransViewModel extends ChangeNotifier {
 //son kayıt butonu
 
   Future<String?> save() async {
-  
-
     if (formKey.currentState!.validate()) {
       try {
         stokHareket = stokHareket.copyWith(
@@ -300,7 +298,7 @@ class AddHareketInTransViewModel extends ChangeNotifier {
         );
       } on Exception catch (e) {
         // fetchCatch(this, e);
-        
+
         return fetchCatch(e, this);
       } finally {}
     } else {

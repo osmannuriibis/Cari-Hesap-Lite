@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:kartal/kartal.dart';
 
 import '../../constants/constants.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class MyRoundedTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool obscureText;
 
-  final bool  enableSuggestions;
+  final bool enableSuggestions;
 
   final bool autocorrect;
 
@@ -56,11 +57,21 @@ class MyRoundedTextField extends StatelessWidget {
             contentPadding: const EdgeInsets.only(left: 20),
             filled: filled,
             fillColor: kPrimaryLightColor,
+            labelStyle:
+                context.textTheme.subtitle1!.copyWith(color: Colors.black),
             labelText: label,
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: kPrimaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(29)),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: kPrimaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(29)),
+            ),
             prefixIcon: prefixIcon,
-            
-           suffixIcon: suffixIcon,
+            suffixIcon: suffixIcon,
             border: const OutlineInputBorder(
+              borderSide: BorderSide(color: kPrimaryColor),
               borderRadius: BorderRadius.all(Radius.circular(29)),
             ),
           ),

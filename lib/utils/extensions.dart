@@ -127,7 +127,6 @@ extension SaveExtension on Future<String?> {
       T? model}) async {
     var result = await this;
 
-    bas("showSnackBar result : $result");
 
     if (result == null) {
       if (isPop) {

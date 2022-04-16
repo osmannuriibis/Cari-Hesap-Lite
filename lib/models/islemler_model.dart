@@ -21,6 +21,8 @@ abstract class Islemler extends BaseModel {
   String? evrakNo;
 
   String? cariId;
+  
+  String? cariUnvani;
 
   String? personelId;
   String? kullaniciId;

@@ -15,22 +15,22 @@ class VerifyViewModel extends ChangeNotifier {
 
   listenVerify() {
     listenUser = AuthService().listenUserChanges().call(
-      (event) {
-        bas("User Değişti", this);
-
-        bas("event --- " * 10);
-        bas(event);
-      },
-    );
+          (event) {},
+        );
   }
 
   Future<void> sendVerify() async {
     bas("sendVerify");
-    AuthService().sendVerification();
+    AuthService()
+        .sendVerification()
+        .then((value) => bas("then"))
+        .catchError((onError) {
+      bas("onError");
+      bas(onError.toString());
+    });
 
     while (true) {
       await Future.delayed(const Duration(seconds: 3)).then((value) => null);
-      bas("whie");
       applyVerification();
     }
   }
@@ -38,7 +38,6 @@ class VerifyViewModel extends ChangeNotifier {
   void applyVerification() {
     AuthService().currentUser!.reload();
     if (AuthService().currentUser!.emailVerified) {
-      bas("burada");
       Phoenix.rebirth(key.currentContext!);
     }
   }

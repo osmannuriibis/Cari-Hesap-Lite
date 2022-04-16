@@ -54,6 +54,7 @@ class SirketAddViewModel extends ChangeNotifier {
         if (isNewAdding) await ekAlanlar();
         return null;
       } on Exception catch (e) {
+        bas("burada düştü");
         return fetchCatch(e, this);
       }
     } else {
@@ -79,20 +80,31 @@ class SirketAddViewModel extends ChangeNotifier {
 
   Future<String?> modeliYaz() async {
     //user altı sirket collection'una sirketId atama
-    DBUtils()
+    await DBUtils()
         .getModelReference<UserModel>(AuthService().currentUserId!)
         .collection(DBService().getClassColPath(SirketModel))
         .doc(generatedSirketId)
-        .set({"id" : generatedSirketId}); 
-    DBUtils()
-        .getModelReference<SirketModel>(generatedSirketId)
-        .collection(DBService().getClassColPath(UserModel))
+        .set({"id": generatedSirketId});
+/*     try {
+      DBUtils()
+          .getModelReference<SirketModel>(generatedSirketId)
+          .collection(DBService().getClassColPath(UserModel))
+          .doc(AuthService().currentUserId)
+          .set({"id": AuthService().currentUserId});
+
+      return await DBUtils().addOrSetModel(_sirket);
+    } on FirebaseException catch (e) {
+      // TODO
+    } */
+  }
+
+  basbas() {
+    FirebaseFirestore.instance
+        .collection("users")
         .doc(AuthService().currentUserId)
-        .set({"id" : AuthService().currentUserId});
-    
-
-
-    return await DBUtils().addOrSetModel(_sirket);
+        .collection("sirketler")
+        .doc("generatedSirketId")
+        .set({"data": "data"});
   }
 
   Future<void> ekAlanlar() async {

@@ -1,5 +1,3 @@
-import 'dart:developer';
-import 'dart:ui';
 
 import 'package:cari_hesapp_lite/components/appbar/my_app_bar.dart';
 import 'package:cari_hesapp_lite/components/dialogs/bu_nedir_dialog.dart';
@@ -11,9 +9,7 @@ import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils
 import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/place_picker.dart';
 import 'package:cari_hesapp_lite/utils/place_picker_package/lib/entities/entities.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/validator.dart';
-import 'package:cari_hesapp_lite/views/cari/cari_add_view/cari_add_view_model/components/each_row_text_field.dart';
 import 'package:easy_mask/easy_mask.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,74 +23,70 @@ import '../../../models/bilgiler/bilgiler.dart';
 import '../../../services/il_ilce_json/il_ilce_listesi.dart';
 import '../../../utils/num_input_formatter.dart';
 import 'cari_add_view_model/cari_add_view_model.dart';
+import 'components/each_row_text_field.dart';
 
-class CariAddView extends StatefulWidget {
-  @override
-  _CariAddViewState createState() => _CariAddViewState();
-}
-
-class _CariAddViewState extends State<CariAddView> with Validator {
-  @override
+// ignore: must_be_immutable
+class CariAddView extends StatelessWidget with Validator {
   late BuildContext context;
   List<Widget> getExtraPhoneField = [];
 
   late CariAddViewModel viewModel;
+  //late TabController tabController;
+  var tabKey = GlobalKey<State>();
 
   late CariAddViewModel viewModelUnlistened;
+
+  CariAddView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     this.context = context;
-
     viewModel = Provider.of<CariAddViewModel>(context);
     viewModelUnlistened = Provider.of(context, listen: false);
-    print(viewModel);
 
     return DefaultTabController(
-      initialIndex: viewModel.initialIndex,
+      key: const Key("Tab"),
       length: 3,
-      child: Scaffold(
-        appBar: MyAppBar(
-          titleText: "Cari " + (viewModel.isNewAdding ? "Ekle" : "Düzenle"),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.check,
-              ),
-              onPressed: () {
-                save();
+      child: Builder(builder: (context) {
+        return Scaffold(
+          appBar: MyAppBar(
+            titleText: "Cari " + (viewModel.isNewAdding ? "Ekle" : "Düzenle"),
+            bottom: TabBar(
+              indicatorColor: Colors.transparent,
+              labelColor: Colors.black,
+              /**/
+              onTap: (int index) {
+              
               },
-            )
-          ],
-          bottom: const TabBar(
-            indicatorWeight: 2,
-            tabs: [
-              Tab(
-                text: "Genel",
-              ),
-              Tab(
-                text: "Finansal",
-              ),
-              Tab(
-                text: "Son Adım",
-              ),
-            ],
-          ),
-        ),
-        body: Form(
-          key: viewModel.formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TabBarView(
-              children: [
-                _buildTab1(context),
-                _buildTab2(context),
-                _buildTab3(context),
+              tabs: const [
+                Tab(
+                  text: "Genel",
+                ),
+                Tab(
+                  text: "Finansal",
+                ),
+                Tab(
+                  text: "Son Adım",
+                ),
               ],
             ),
           ),
-        ),
-      ),
+          body: Form(
+            key: viewModel.formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TabBarView(
+                //  controller: tabController,
+                children: [
+                  _buildTab1(context),
+                  _buildTab2(context),
+                  _buildTab3(context),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -226,63 +218,70 @@ class _CariAddViewState extends State<CariAddView> with Validator {
           readOnly: viewModel.readOnlyIlce,
           keyboardType: TextInputType.name,
           hintText: "Bayrampaşa",
+          divider: false,
           onTap: () {
             showIlceListesiDialog(context).then((value) {
               viewModelUnlistened.setIlce(value);
             });
           },
         ),
-        TextButton(
-          child: const Text("Devam"),
-          onPressed: () {
-            if (viewModel.formKey.currentState!.validate()) {
-              setState(() {
-                viewModelUnlistened.initialIndex = 1;
-              });
-            }
-          },
-        )
+        Visibility(
+            visible: !(viewModel.formKey.currentState?.validate() ?? true),
+            child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Text("*Zorunlu alanlar kaldı",
+                    style: TextStyle(
+                        color: Colors.red, fontStyle: FontStyle.italic)))),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: OutlinedButton(
+            child: const Text("Devam"),
+            onPressed: () {
+              viewModel.notify();
+              if (viewModel.formKey.currentState!.validate()) {
+                var tabController = DefaultTabController.of(context);
+                if (tabController != null) tabController.animateTo(1);
+              }
+            },
+          ),
+        ),
       ],
     );
   }
 
   Future showDialogForGrup(BuildContext context) {
-    var query = DBUtils().getClassReference<Bilgiler>();
-    bas(query.path);
-    bas(query.doc(Bilgiler.cariGrup).path);
     return showDialog(
       context: context,
-      builder: (context) => AlertDialogWithFirebaseList(
-        title: const Text("Cari Grup Seç/Ekle"),
-        hintText: "Örn: Restoran",
-        onLongPressItem: (MapEntry map) {
-          bas(map);
-          viewModelUnlistened.deleteCariGrupFromList(map);
-        },
-        onPressedItem: (MapEntry map) {
-          bas(map);
+      builder: (context) => SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: AlertDialogWithFirebaseList(
+          title: const Text("Cari Grup Seç/Ekle"),
+          hintText: "Örn: Restoran",
+          onLongPressItem: (MapEntry map) {
+            viewModelUnlistened.deleteCariGrupFromList(map);
+          },
+          onPressedItem: (MapEntry map) {
 
-          viewModelUnlistened.selectCariGrupFromList(map);
-          Navigator.of(context).pop(true);
-        },
-        query: getBilgilerDocRef(Bilgiler.cariGrup).snapshots(),
-        controller: viewModel.controllerCariGrupDialog,
-        onPressedActionButton: () async {
-          if (viewModelUnlistened.controllerCariGrupDialog.text.isNotEmpty &&
-              await viewModelUnlistened.addCariGrup()) {
-            bas("object");
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Listeye Eklendi"),
-            ));
-          }
-          viewModelUnlistened.formKey.currentState!.reset();
-        },
+            viewModelUnlistened.selectCariGrupFromList(map);
+            Navigator.of(context).pop(true);
+          },
+          query: getBilgilerDocRef(Bilgiler.cariGrup).snapshots(),
+          controller: viewModel.controllerCariGrupDialog,
+          onPressedActionButton: () async {
+            if (viewModelUnlistened.controllerCariGrupDialog.text.isNotEmpty &&
+                await viewModelUnlistened.addCariGrup()) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Listeye Eklendi"),
+              ));
+            }
+            viewModelUnlistened.formKey.currentState!.reset();
+          },
+        ),
       ),
     );
   }
 
   Future showDialogForCariTuru(BuildContext context) {
-    CariTuru selectedCariTuru;
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -293,9 +292,8 @@ class _CariAddViewState extends State<CariAddView> with Validator {
           children: [
             for (var item in CariTuru.values)
               GestureDetector(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
+                child: ListTile(
+                  title: Text(
                     "${item.stringValue}",
                     style: const TextStyle(fontSize: 16),
                   ),
@@ -314,7 +312,6 @@ class _CariAddViewState extends State<CariAddView> with Validator {
   Widget _buildTab2(BuildContext context) {
     return MyColumn(
       children: [
-
         BaseBorderedTextField(
           readOnly: !viewModelUnlistened.isNewAdding,
           labelText: "Devir Bakiye",
@@ -341,9 +338,10 @@ class _CariAddViewState extends State<CariAddView> with Validator {
           keyboardType: TextInputType.number,
         ),
         TextButton(
-          child: Text("Devam"),
+          child: const Text("Devam"),
           onPressed: () {
-            DefaultTabController.of(context)!.animateTo(2);
+            var tabController = DefaultTabController.of(context);
+            if (tabController != null) tabController.animateTo(2);
           },
         )
       ],
@@ -407,15 +405,15 @@ class _CariAddViewState extends State<CariAddView> with Validator {
     );
   }
 
-  addNewPhoneFiled() {
-    setState(() {
+  /* addNewPhoneFiled() {
+    
       getExtraPhoneField.add(BaseBorderedTextField(
         keyboardType: TextInputType.number,
         inputFormatters: [DecimalTextInputFormatter()],
         labelText: ("Telefon " + (getExtraPhoneField.length + 2).toString()),
       ));
-    });
-  }
+    
+  } */
 
   Future<Map<String, String>?> showIlListesiDialog(BuildContext context) {
     ilListesi.sort((a, b) {
@@ -436,7 +434,7 @@ class _CariAddViewState extends State<CariAddView> with Validator {
           ),
           for (var item in ilListesi)
             ListTile(
-              leading: SizedBox.shrink(),
+              leading: const SizedBox.shrink(),
               title: Text(
                 item['name']!,
               ),
@@ -488,7 +486,6 @@ class _CariAddViewState extends State<CariAddView> with Validator {
   }
 
   void save() {
-    
     viewModelUnlistened.save().showSaveSnackBar(context);
   }
 
@@ -517,10 +514,11 @@ class _CariAddViewState extends State<CariAddView> with Validator {
   }
 }
 
+// ignore: must_be_immutable
 class MySwitch extends StatefulWidget {
   late CariAddViewModel _viewModel;
   late bool _isSwitchDisable;
-  MySwitch(CariAddViewModel viewModel, bool isSwitchDisable) {
+  MySwitch(CariAddViewModel viewModel, bool isSwitchDisable, {Key? key}) : super(key: key) {
     _isSwitchDisable = isSwitchDisable;
     _viewModel = viewModel;
   }

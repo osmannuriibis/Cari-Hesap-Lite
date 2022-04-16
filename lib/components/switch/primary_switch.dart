@@ -1,11 +1,11 @@
 import '../../constants/constants.dart';
 import 'package:flutter/material.dart';
 
-class PrimarySwitch extends StatelessWidget {
+class MyPrimarySwitch extends StatelessWidget {
   final void Function(bool) onChanged;
   final bool value;
 
-  const PrimarySwitch({
+  const MyPrimarySwitch({
     Key? key,
     required this.onChanged,
     required this.value,

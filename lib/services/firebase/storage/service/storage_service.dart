@@ -21,15 +21,15 @@ class StorageService with DBService {
   }
 
   Future<String> setImage<T extends BaseModel>(
-      StorageFolder folderType, String modelId, File imageFile ,String fileName) {
-    var task = getReference(folderType, modelId)
+      StorageFolder mainFolder, String modelId, File imageFile ,String fileName) {
+    var task = getReference(mainFolder, modelId)
     .child(fileName)
     .putFile(imageFile);
     return task.then((p0) => p0.ref.getDownloadURL());
   }
 
   Reference getReference(StorageFolder folderType, String modelId) {
-    return storage.ref(folderType.getName).child(modelId);
+    return storage.ref(folderType.name).child(modelId);
   }
 }
 

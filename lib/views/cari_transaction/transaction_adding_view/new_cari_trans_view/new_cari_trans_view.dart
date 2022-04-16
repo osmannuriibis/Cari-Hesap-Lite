@@ -7,7 +7,6 @@ import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
 import 'package:cari_hesapp_lite/models/kartlar/stok_kart.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -18,7 +17,6 @@ import '../../../../components/text_fields/base_form_field.dart';
 import '../../../../constants/constants.dart';
 
 import '../../../../enums/irsaliye_turu_enum.dart';
-import '../../../../models/kartlar/cari_kart.dart';
 import '../../../../models/stok_hareket.dart';
 import '../../../../utils/date_format.dart';
 import '../add_hareket_to_trans_view/add_hareket_in_trans_view.dart';
@@ -674,7 +672,6 @@ class _Body extends StatelessWidget {
                 ]),
                 child: _ItemForStokHareket(
                   onTap: () {
-                    bas(_viewModel.hareketListesiSonHali[index]);
                   },
                   onLongPress: () {
                     _viewModel.removeItem(index);
@@ -702,8 +699,6 @@ class _Body extends StatelessWidget {
 
   Widget _buildSiparisArea(
       BuildContext context, CariTransactionAddViewModel viewModel) {
-    bas("viewModel.siparisModel != null && viewModel.isSiparisShowing");
-    bas(viewModel.siparisModel != null && viewModel.isSiparisShowing);
     return MyCard(
         child: Column(
       children: [

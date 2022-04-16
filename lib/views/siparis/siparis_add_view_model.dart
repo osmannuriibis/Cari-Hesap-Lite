@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../enums/cari_islem_turu.dart';
 import '../../models/kartlar/cari_kart.dart';
 import '../../models/siparis_model.dart';
-import '../../utils/print.dart';
 import 'package:flutter/material.dart';
 
 class SiparisAddViewModel extends ChangeNotifier {
@@ -52,7 +51,6 @@ class SiparisAddViewModel extends ChangeNotifier {
 
   set siparis(SiparisModel value) {
     _siparisModel = value;
-    bas("Notify");
 
     notifyListeners();
   }
@@ -62,7 +60,6 @@ class SiparisAddViewModel extends ChangeNotifier {
   set birim(String? value) {
     _birim = value;
     notifyListeners();
-    bas("notify");
   }
   //setters & getters
   ////////////////////////////////////////////////////////////

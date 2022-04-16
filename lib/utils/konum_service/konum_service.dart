@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:cari_hesapp_lite/utils/place_picker_package/lib/place_picker.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -28,10 +28,9 @@ class KonumService extends ChangeNotifier {
             Geolocator.requestPermission().then((value) {
               if (value.index > 1) {
                 Geolocator.getCurrentPosition().then((value) {
-                  bas(currentPosition = value);
                 });
                 Geolocator.getLastKnownPosition().then((value) {
-                  if (value != null) bas(lastLocation = value);
+                  if (value != null) lastLocation = value;
                 });
               }
             });
@@ -73,5 +72,6 @@ class KonumService extends ChangeNotifier {
 }
 
 extension SetLatLng on Position {
-  get getLatLng => LatLng(latitude, longitude);
+  get toLatLng => LatLng(latitude, longitude);
+  get toGeoPoint => GeoPoint(latitude, longitude);
 }

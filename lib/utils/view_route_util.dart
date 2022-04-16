@@ -12,11 +12,7 @@ import '../views/stok/stok_list_view/stok_liste_view.dart';
 Future<CariKart?> getCariKartByPop(BuildContext context) async{
   return await goToView<CariKart?,CariListViewModel>(context, viewToGo: CariListView(),viewModel: CariListViewModel());
 
-  Navigator.push<CariKart>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CariListView(),
-      ));
+
 }
 
 Future<StokKart?> getStokKartByPop(BuildContext context) {

@@ -18,18 +18,19 @@ class RaporViewModel extends ChangeNotifier {
   }
 
 
-  List<QueryDocumentSnapshot>? _tumIslemList;
-  Future<List<QueryDocumentSnapshot>> get tumIslemList async {
+  List<CariIslemModel>? _tumIslemList;
+  Future<List<CariIslemModel>> get tumIslemList async {
     return _tumIslemList ?? await _getTumList();
   }
 
-    Future<List<QueryDocumentSnapshot>> _getTumList() async {
+    Future<List<CariIslemModel>> _getTumList() async {
     _tumIslemList =
-        await DBUtils().getClassReference<CariIslemModel>().get().then((value) => value.docs);
+        await DBUtils().
+        getModelListAsFuture<CariIslemModel>();
 
 
     _tumIslemList!
-        .sort((e, y) => (e.getDuzenlemeTarihi.compareTo(y.getDuzenlemeTarihi)));
+        .sort((e, y) => (e.islemTarihi!.compareTo(y.islemTarihi!)));
 
     return _tumIslemList!;
   }

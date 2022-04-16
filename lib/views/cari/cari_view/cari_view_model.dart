@@ -20,10 +20,10 @@ class CariViewModel extends ChangeNotifier {
   late StreamSubscription<CariKart?> listenCariKart;
 
   late StreamSubscription<List<CariIslemModel>> listenCariIslem;
-  late StreamSubscription<List<HesapHareket>> listenHesapHareket;
+  late StreamSubscription<List<HesapHareketModel>> listenHesapHareket;
 
   List<CariIslemModel> _listCariIslem = [];
-  List<HesapHareket> _listHesapHareket = [];
+  List<HesapHareketModel> _listHesapHareket = [];
 
   List<CariIslemModel> get listCariIslem => _listCariIslem;
 
@@ -32,9 +32,9 @@ class CariViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<HesapHareket> get listHesapHareket => _listHesapHareket;
+  List<HesapHareketModel> get listHesapHareket => _listHesapHareket;
 
-  set listHesapHareket(List<HesapHareket> value) {
+  set listHesapHareket(List<HesapHareketModel> value) {
     _listHesapHareket = value;
     notifyListeners();
   }
@@ -59,7 +59,7 @@ class CariViewModel extends ChangeNotifier {
   void makeCall() {
     var tel = _cariKart.telNo?.first;
     if (tel.isNotEmptyOrNull) {
-      canLaunch('tel').then((value) => bas(value));
+      canLaunch('tel').then((value) => null);
       // launch('tel:${_cariKart.telNo!.first!}');
       launch(Uri(scheme: 'tel', path: tel).toString());
     }
@@ -84,7 +84,6 @@ class CariViewModel extends ChangeNotifier {
     var mail = _cariKart.email;
     if (mail.isNotEmptyOrNull) {
       canLaunch('mailto:').then((value) {
-        bas(value);
         if (value) {
           launch("mailto:$mail");
         }
@@ -105,16 +104,18 @@ class CariViewModel extends ChangeNotifier {
   }
 
   void fetchTransactionList() {
-    listenCariIslem = dbUtil.getModelListAsStream<CariIslemModel>(
-        [MapEntry("cariId", cariKart.id!)]).call(
+    listenCariIslem = dbUtil.getModelListAsStream<CariIslemModel>([
+      MapEntry(MapEntry("cariId", cariKart.id!), FirestoreClause.isEqualTo)
+    ]).call(
       (event) {
         listCariIslem.clear();
         listCariIslem = event;
       },
     );
 
-    listenHesapHareket = dbUtil.getModelListAsStream<HesapHareket>(
-        [MapEntry("cariId", cariKart.id!)]).call(
+    listenHesapHareket = dbUtil.getModelListAsStream<HesapHareketModel>([
+      MapEntry(MapEntry("cariId", cariKart.id!), FirestoreClause.isEqualTo)
+    ]).call(
       (event) {
         listHesapHareket.clear();
         listHesapHareket = event;

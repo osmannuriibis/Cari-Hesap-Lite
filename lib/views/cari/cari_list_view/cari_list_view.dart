@@ -7,6 +7,7 @@ import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../../../components/cp_indicators/cp_indicator.dart';
 import '../../../components/switch/primary_switch.dart';
 import '../../../constants/constants.dart';
 import '../cari_add_view/cari_add_view.dart';
@@ -21,52 +22,55 @@ mixin type implements CariView {}
 class CariListView extends StatelessWidget {
   String sorting = "konum";
 
-  late CariListViewModel _viewModel;
+  late CariListViewModel viewModel;
 
   CariListView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    _viewModel = Provider.of<CariListViewModel>(context);
+    viewModel = Provider.of<CariListViewModel>(context);
 
     Widget titleAppBar;
 
-    var list = _viewModel.listBase;
+    var list = viewModel.listBase;
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: MyAppBar(
-        automaticallyImplyLeading: !_viewModel.isSearchPressed,
-        title: _viewModel.isSearchPressed
+        automaticallyImplyLeading: !viewModel.isSearchPressed,
+        title: viewModel.isSearchPressed
             ? SearchInput(
                 (str) async {
+                  viewModel.hasSearchEntryIcon = const CPIndicator(size: 25);
                   await Future.delayed(const Duration(milliseconds: 500));
 
-                  _viewModel.filterText = str.trim();
+                  viewModel.hasSearchEntryIcon = const Icon(Icons.clear);
+                  viewModel.filterText = str.trim();
                 },
-                hintText: _viewModel.isCari ? "Cari Ara.." : "Tedarikçi Ara..",
+                hintText: viewModel.isCari ? "Cari Ara.." : "Tedarikçi Ara..",
                 leadIconPressed: () {
-                  _viewModel.isSearchPressed = !_viewModel.isSearchPressed;
-                  _viewModel.filterText = "";
+                  viewModel.isSearchPressed = !viewModel.isSearchPressed;
+                  viewModel.filterText = "";
                 },
+                hasSearchEntryIcon: viewModel.hasSearchEntryIcon,
                 leadIcon: Icons.close,
               )
             : null,
-        titleText: (_viewModel.isCari ? "Cariler" : "Tedarikçiler"),
+        titleText: (viewModel.isCari ? "Cariler" : "Tedarikçiler"),
         actions: [
-          !_viewModel.isSearchPressed
+          !viewModel.isSearchPressed
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {
-                          _viewModel.isSearchPressed =
-                              !_viewModel.isSearchPressed;
+                          viewModel.isSearchPressed =
+                              !viewModel.isSearchPressed;
                         }),
                     PopupMenuButton<String>(
                       offset: Offset.zero,
-                      initialValue: "unvani",
+                      initialValue: "unvan",
                       onSelected: (value) {
-                        _viewModel.sortField = value;
+                        viewModel.sortField = value;
                       },
                       icon: const Icon(Icons.sort),
                       itemBuilder: (context) {
@@ -74,30 +78,29 @@ class CariListView extends StatelessWidget {
                           const PopupMenuItem(
                               child: Text("Konuma Göre"), value: "konum"),
                           const PopupMenuItem(
-                              child: Text("İsime Göre"), value: "unvani"),
+                              child: Text("İsime Göre"), value: "unvan"),
                         ];
                       },
                     ),
                   ],
                 )
               : const SizedBox.shrink(),
-          PrimarySwitch(
-            key: Key("${_viewModel.isCari}"),
-            value: _viewModel.isCari,
+          MyPrimarySwitch(
+            key: Key("${viewModel.isCari}"),
+            value: viewModel.isCari,
             onChanged: (value) {
-              _viewModel.isCari = value;
+              viewModel.isCari = value;
             },
           )
         ],
       ),
       body: Column(
         children: [
-      
           ListView.separated(
             shrinkWrap: true,
             separatorBuilder: (context, index) => const Divider(),
             itemCount: list.length,
-            key: _viewModel.isCari ? const Key("Cari") : const Key("Firma"),
+            key: viewModel.isCari ? const Key("Cari") : const Key("Firma"),
             /*   stream: _viewModel.getCariListAsStream(isCari,
               filterText: searchText, sortField: sorting), */
 
@@ -124,10 +127,10 @@ class CariListView extends StatelessWidget {
                         flex: 5,
                         child: Text(
                           cariKart.unvani ?? "",
-                          overflow: TextOverflow.ellipsis,
+                          overflow: TextOverflow.visible,
                           style: Theme.of(context)
                               .textTheme
-                              .headline6!
+                              .titleMedium!
                               .copyWith(fontFamily: "Quicksand"),
                         ),
                       ),
@@ -145,17 +148,17 @@ class CariListView extends StatelessWidget {
                                 "Bakiye",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1!
+                                    .titleSmall!
                                     .copyWith(
                                         color: Colors.black54,
                                         fontFamily: "Quicksand"),
                               ),
                               Text(
                                 (cariKart.bakiye ?? 0).toStringAsFixed(2) +
-                                    ( "₺"),
+                                    ("₺"),
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1!
+                                    .titleSmall!
                                     .copyWith(
                                         color: Colors.black54,
                                         fontFamily: "Quicksand"),
@@ -166,19 +169,16 @@ class CariListView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: 6,
-                          child: Text(
-                            cariKart.ekBilgi ?? "",
-                          ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 6,
+                        child: Text(
+                          cariKart.ekBilgi ?? "",
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: () {
@@ -213,7 +213,7 @@ class CariListView extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => ChangeNotifierProvider(
                       create: (context) => CariAddViewModel.addNewCari(
-                          _viewModel.cariTuru(_viewModel.isCari)),
+                          viewModel.cariTuru(viewModel.isCari)),
                       child: CariAddView())));
         },
         backgroundColor: kPrimaryColor,

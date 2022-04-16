@@ -1,12 +1,7 @@
-import 'package:cari_hesapp_lite/models/base_model/base_model.dart';
-
-import 'package:cari_hesapp_lite/utils/print.dart';
-
 import '../utils/extensions.dart';
 
 class Validator {
   String? cokKisaOldu(String? value) {
-    bas("validator çalıştı: $value");
     if (value == null) {
       return "Çok kısa oldu!";
     } else {
@@ -32,16 +27,16 @@ class Validator {
 
   String? kdvValidator(String? value) {
    if(value != null){ 
-     var val = (value != "") ? (num.tryParse(value) != null ? num.tryParse(value) :0 ) : 0;
+     var val = (value != "") ? (num.tryParse(value) ?? 0 ) : 0;
 
-    if (val! < 0 || val > 100) {
+    if (val < 0 || val > 100) {
       return "0-100 arasında olmalı";
     }}
     return null;
   }
 
   String? ibanValidator(String? val) {
-    print("iban lenght: " + val!.length.toString());
+    if(val == null) return "Eksiksiz giriniz yada boş geçiniz";
     if (val.length <= 2 || val.length == 32) {
       return null;
     } else {

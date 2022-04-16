@@ -6,6 +6,9 @@ import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/profile_view/profile_view.dart';
 import 'package:cari_hesapp_lite/views/profile_view/profile_view_model.dart';
+import 'package:cari_hesapp_lite/views/sirket/sirket_add/add_sirket_view.dart';
+import 'package:cari_hesapp_lite/views/sirket/sirket_add/add_sirket_view.model.dart';
+import 'package:cari_hesapp_lite/views/stok/stok_add_view/view_model/stok_add_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utils/user_provider.dart';
@@ -19,15 +22,24 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bas("userProvider.userModel.photoUrl");
-    bas(userProvider.userModel?.toMap());
 
-    bas(userProvider.userModel?.photoURL);
-
+    /*  return UserAccountsDrawerHeader(
+        arrowColor: Colors.black,
+        currentAccountPicture: CircleAvatar(
+          radius: 30,
+          backgroundImage:
+              (userProvider.userModel?.photoURL.isEmptyOrNull ?? true)
+                  ? defaultImage
+                  : Image.network(userProvider.userModel!.photoURL!).image,
+        ),
+        onDetailsPressed: () {},
+        accountName: Text("accountName"),
+        accountEmail: Text("accountEmail"));
+ */
     return DrawerHeader(
       // curve: Curves.elasticIn,
       // padding: EdgeInsets.all(0),
-      // decoration: BoxDecoration(),
+      decoration: BoxDecoration(color: Colors.amber.shade100),
       child: MyColumn(
         isSeperator: false,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,8 +64,7 @@ class Header extends StatelessWidget {
             onTap: () {
               goToView(context,
                   viewToGo: ProfileView(),
-                  viewModel:
-                      ProfileViewModel( AuthService().currentUserId!));
+                  viewModel: ProfileViewModel(AuthService().currentUserId!));
             },
           ),
           const Divider(),
@@ -76,19 +87,22 @@ class Header extends StatelessWidget {
             onTap: () {
               goToView(context,
                   viewToGo: ProfileView(),
-                  viewModel:
-                      ProfileViewModel( AuthService().currentUserId!));
+                  viewModel: ProfileViewModel(AuthService().currentUserId!));
             },
           ),
           const Divider(),
           GestureDetector(
             onTap: () {
+              goToView(context,
+                  viewToGo: SirketAddView(),
+                  viewModel:
+                      SirketAddViewModel.showExist(userProvider.sirketModel!));
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  userProvider.sirketModel?.unvani ?? "null",
+                  userProvider.sirketModel?.unvani ?? "__",
                   style: const TextStyle(fontSize: 20, fontFamily: "Quicksand"),
                 ),
                 const Icon(

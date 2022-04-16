@@ -18,7 +18,7 @@ PlacePicker showPlacePicker({String initialSearchWord = ""}) {
       unnamedLocation: "Belirtilmemiş yer",
     ),
     displayLocation: KonumService().lastLocation != null
-        ? KonumService().lastLocation.getLatLng
+        ? KonumService().lastLocation.toLatLng
         : null,
   );
 }

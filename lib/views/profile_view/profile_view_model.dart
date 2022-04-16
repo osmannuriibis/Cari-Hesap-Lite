@@ -6,6 +6,7 @@ import 'package:cari_hesapp_lite/services/firebase/database/service/database_ser
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ProfileViewModel extends ChangeNotifier {
@@ -26,17 +27,13 @@ class ProfileViewModel extends ChangeNotifier {
         .getModelReference<UserModel>(AuthService().currentUserId!)
         .get()
         .then((value) {
-      bas("value" * 15);
-      bas(value.data());
     });
     listenUser = dbUtil
         .getModelAsStream<UserModel>(userId ?? AuthService().currentUserId!)
         .call((event) {
-      bas("event" * 15);
-      bas(event);
 
       user = event;
-      user!.id = userId;
+      user?.id ??= AuthService().currentUserId;
       setController();
     });
   }
@@ -141,9 +138,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void setController() {
-    bas("user.toString()");
-    bas(user.toString());
-
+  
     controllerUyelik = TextEditingController(
         text: user?.uyelikTipi?.getUyelikTipiBaslik ?? "");
 
@@ -173,8 +168,7 @@ class ProfileViewModel extends ChangeNotifier {
       var result =
           await auth.updateEmailVerify(controllerChangeEmailEmail.text.trim());
 
-      bas("email update HATALARI => e.code");
-      bas(result);
+    
 
       if (result == null) {
         return true;
@@ -204,7 +198,6 @@ class ProfileViewModel extends ChangeNotifier {
 
     String? chechResult =
         await checkPassword(controllerChangePasswordOldPass.text);
-    bas(chechResult);
 
     if (chechResult == null) {
       if (controllerChangePasswordNew1Pass.text ==
@@ -253,5 +246,11 @@ class ProfileViewModel extends ChangeNotifier {
   void dispose() {
     listenUser.cancel();
     super.dispose();
+  }
+
+  ppStoragePath() {
+
+
+
   }
 }

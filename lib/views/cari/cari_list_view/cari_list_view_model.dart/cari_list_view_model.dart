@@ -7,7 +7,6 @@ import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/calc_distance.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/konum_extension.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/konum_service.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../enums/cari_turu.dart';
@@ -21,7 +20,6 @@ class CariListViewModel extends ChangeNotifier {
 
   set isSearchPressed(bool value) {
     _isSearchPressed = value;
-    bas(value);
     notifyListeners();
   }
 
@@ -41,7 +39,13 @@ class CariListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? sortField;
+  String? _sortField;
+  set sortField(String? value) {
+    _sortField = value;
+    notifyListeners();
+  }
+
+  String? get sortField => _sortField;
 
   List<CariKart> _listBase = <CariKart>[];
 
@@ -72,6 +76,7 @@ class CariListViewModel extends ChangeNotifier {
 
     //sortField alanına göre sıralama yapıyor
     if (sortField.isNotEmptyOrNull) {
+      if (sortField! == "unvan") sortByUnvan(_list);
       if (sortField! == "konum") sortByKonum(_list);
     }
 
@@ -109,6 +114,12 @@ class CariListViewModel extends ChangeNotifier {
     });
   }
 
+  void sortByUnvan(List<CariKart> list) {
+    list.sort((e, y) {
+      return (e.unvani ?? "").compareTo((y.unvani ?? ""));
+    });
+  }
+
   List<CariKart> filterList(List<CariKart> list, String? filterText) {
     var _list = <CariKart>[];
     if (filterText.isNotEmptyOrNull) {
@@ -127,10 +138,16 @@ class CariListViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    bas("dispose");
     listen.cancel();
     super.dispose();
   }
+  Widget _hasSearchEntryIcon = const Icon(Icons.clear);
+  set hasSearchEntryIcon(Widget widget) {
+    _hasSearchEntryIcon = widget;
+    notifyListeners();
+  }
+    Widget get hasSearchEntryIcon => _hasSearchEntryIcon;
+
 
 }
 

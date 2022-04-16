@@ -4,7 +4,6 @@ import '../../../../services/firebase/database/utils/database_utils.dart';
 
 import '../../../constants/constants.dart';
 import '../../../models/kartlar/stok_kart.dart';
-import '../../../services/firebase/database/service/database_service.dart';
 
 import '../stok_add_view/stok_add_view.dart';
 import '../stok_add_view/view_model/stok_add_view_model.dart';
@@ -13,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class StokListView extends StatelessWidget {
+  const StokListView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,18 +25,20 @@ class StokListView extends StatelessWidget {
         titleText: "Stok Seç",
       ),
       body: SafeArea(child: StoksList()),
+
       floatingActionButton: FloatingActionButton.extended(
-        label: Text("Yeni Ekle"),
+        backgroundColor: kPrimaryColor,
+        label: const Text("Yeni Ekle", style: TextStyle(color: Colors.black)),
         onPressed: () {
           Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChangeNotifierProvider(
                     create: (context) => StokAddViewModel.addNewStok(),
-                    child: StokAddView()),
+                    child: const StokAddView()),
               ));
         },
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add, color: Colors.black),
       ),
     );
   }
@@ -50,14 +53,11 @@ class StoksList extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-
   @override
-  Widget build(BuildContext contextt) {
+  Widget build(BuildContext context) {
     return MyFirestoreColList(
-      defaultChild: Center(
-        child: CircularProgressIndicator(
-          backgroundColor: kPrimaryColor,
-        ),
+      defaultChild: const Center(
+        child: CircularProgressIndicator(backgroundColor: kPrimaryColor)
       ),
       query: DBUtils().getClassReference<StokKart>(),
       itemBuilder: (context, snapshot, index) {
@@ -67,18 +67,20 @@ class StoksList extends StatelessWidget {
           return _ListTileItem(
             stokKart: stokKart,
             onTap: () {
-              Navigator.pop(contextt, StokKart.fromMap(map));
+              Navigator.pop(context, StokKart.fromMap(map));
             },
           );
         }
-        return ListTile(title: Text("Veri YOK"),);
+        return const ListTile(
+          title: Text("Veri yok")
+        );
       },
     );
   }
 }
 
 class _ListTileItem extends StatelessWidget {
-  final void  Function()? onTap;
+  final void Function()? onTap;
   const _ListTileItem({
     Key? key,
     required this.stokKart,

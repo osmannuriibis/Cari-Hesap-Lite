@@ -5,10 +5,9 @@ import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/calc_distance.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/konum_extension.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/konum_service.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:flutter/material.dart';
 
-class MyFirestoreList<T> extends StatelessWidget {
+class MyFirestoreList2<T> extends StatelessWidget {
   late Type type;
 
   final Future<List<T>>? future;
@@ -27,7 +26,7 @@ class MyFirestoreList<T> extends StatelessWidget {
 
   final bool isTitleAlways;
 
-  MyFirestoreList(
+  MyFirestoreList2(
       {Key? key,
       this.physics = const NeverScrollableScrollPhysics(),
       this.future,
@@ -50,16 +49,12 @@ class MyFirestoreList<T> extends StatelessWidget {
   }
 
   Widget builder(BuildContext context, AsyncSnapshot<List<T>> snapshot) {
-    if (snapshot.hasError) {
-      bas("snapshot has error:");
-      bas(snapshot);
-    }
+    if (snapshot.hasError) {}
 
     List<T> list = snapshot.data ?? [];
     /*  if (list.isEmpty) {
       return Text("BOŞ");
     } */
-    bas("object");
     return Column(
       children: [
         listTitle != null || (isTitleAlways && listTitle != null)
@@ -151,20 +146,14 @@ class MyFirestoreColList extends StatelessWidget {
         snapshot.connectionState == ConnectionState.done) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> list =
           snapshot.data?.docs ?? [];
-      bas("list" * 5);
-      bas(list.length);
       // bas(list.first.data().toString());
 
       if (list.isEmpty) return itemBuilder(context, null, -1);
 
-      bas("sortingType" * 4);
-      bas(sortingType);
-
       if (sortingType != null) {
         if (sortingType == "konum") {
           var currentLocation = KonumService().currentPosition;
-          bas("konum sorting yapılıyor");
-          bas(list.map((e) => e.data()));
+          list.map((e) => e.data());
           list.sort((e, y) {
             var first = getDistance(
                 currentLocation.asKonum,
@@ -177,23 +166,20 @@ class MyFirestoreColList extends StatelessWidget {
                     latitude: y.get("konum")["latitude"] ?? 0,
                     longitude: y.get("konum")["longitude"] ?? 0));
 
-            bas(first);
-            bas(second);
+          
             return first.compareTo(second);
           });
-          bas("konum sorting yapıldı");
-          bas(list.map((e) => e.data()));
+        
+          list.map((e) => e.data());
         }
       }
-      bas("BURADAYIZZ dan bi önce");
       if (filterField.isNotEmptyOrNull && filterText.isNotEmptyOrNull) {
-        bas("BURADAYIZZ");
         var val = list.where((element) =>
             (element.data()[filterField] as String)
                 .toLowerCase()
                 .contains(filterText!.toLowerCase()));
         list = val.toList();
-        bas(list.map((e) => e.data()));
+        list.map((e) => e.data());
       }
 
       return SingleChildScrollView(

@@ -11,8 +11,8 @@ class Mapper {
 
     if (T == CariKart) {
       return CariKart.fromMap(map) as T;
-    } else if (T == HesapHareket) {
-      return HesapHareket.fromMap(map) as T;
+    } else if (T == HesapHareketModel) {
+      return HesapHareketModel.fromMap(map) as T;
     } else if (T == UserModel) {
       return UserModel.fromMap(map) as T;
     } else if (T == CariIslemModel) {

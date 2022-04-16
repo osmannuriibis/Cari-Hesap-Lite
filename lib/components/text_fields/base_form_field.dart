@@ -1,3 +1,4 @@
+import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,6 +23,8 @@ class BaseFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? icon;
   final String? suffixText;
+  final int? minLines;
+  final int? maxLines;
 
   final EdgeInsetsGeometry padding;
 
@@ -46,6 +49,8 @@ class BaseFormField extends StatelessWidget {
       this.keyboardType,
       this.onEditingComplete,
       this.focusNode,
+      this.minLines,
+      this.maxLines,
       this.enabled,
       this.padding = const EdgeInsets.all(8.0),
       this.maxLength,
@@ -63,6 +68,8 @@ class BaseFormField extends StatelessWidget {
       child: TextFormField(
         focusNode: focusNode,
         style: style,
+        minLines: minLines,
+        maxLines: maxLines,
         maxLength: maxLength,
         onEditingComplete: onEditingComplete,
         inputFormatters: inputFormatters,
@@ -79,9 +86,13 @@ class BaseFormField extends StatelessWidget {
         readOnly: readOnly,
         initialValue: initialValue,
         decoration: InputDecoration(
+            labelStyle: const TextStyle(color: kAccentColor),
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: kPrimaryColor)),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: kPrimaryColor)),
             border: border,
             isDense: true,
-           
             suffixIcon: suffixIcon,
             icon: icon,
             suffix: suffix,

@@ -9,9 +9,7 @@ import '../../../models/kartlar/stok_kart.dart';
 class StokViewModel extends ChangeNotifier {
   var dbUtil = DBUtils();
   StokKart stokKart;
-  List<MapEntry<String, num>> depoList = [];
   List<StokHareket> listStokHareket = [];
-
 
   late StreamSubscription<List<StokHareket>> listenMovement;
 
@@ -19,17 +17,15 @@ class StokViewModel extends ChangeNotifier {
     init();
   }
 
-
-
   void fetchMovement() {
-    listenMovement = dbUtil.getModelListAsStream<StokHareket>(
-        [MapEntry("urunId", stokKart.id!)]).call((event) {
-      bas("event.length");
-      bas(event.length);
+    listenMovement = dbUtil.getModelListAsStream<StokHareket>([
+      MapEntry(MapEntry("urunId", stokKart.id!), FirestoreClause.isEqualTo)
+    ]).call((event) {
       listStokHareket.clear();
       for (var item in event) {
         listStokHareket.add(item);
       }
+      listStokHareket.sort((e, y) => e.islemTarihi!.compareTo(y.islemTarihi!));
       notifyListeners();
     });
   }

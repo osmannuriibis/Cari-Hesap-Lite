@@ -22,8 +22,6 @@ class FirebaseModelBuilder2<T extends BaseModel> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bas("type");
-    bas(type);
     return (type == Stream)
         ? StreamBuilder<T?>(
             stream: null,  //dbUtil.getModelAsStream2(modelId), 
@@ -46,8 +44,6 @@ class FirebaseModelBuilder2<T extends BaseModel> extends StatelessWidget {
   }
 
   Widget _builder(BuildContext context, AsyncSnapshot<T?> snapshot) {
-    bas("snapshot.data");
-    bas(snapshot.data);
 
     if (snapshot.connectionState == ConnectionState.done ||
         snapshot.connectionState == ConnectionState.active) {

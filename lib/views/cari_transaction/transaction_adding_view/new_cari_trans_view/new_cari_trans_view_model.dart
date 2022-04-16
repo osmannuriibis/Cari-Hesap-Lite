@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cari_hesapp_lite/enums/siparis_status.dart';
 import 'package:cari_hesapp_lite/models/siparis_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cari_hesapp_lite/services/firebase/database/enum/miktar_degisim.dart';
+import 'package:cari_hesapp_lite/enums/miktar_degisim.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
 

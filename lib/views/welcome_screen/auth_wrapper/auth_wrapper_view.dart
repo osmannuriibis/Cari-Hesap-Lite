@@ -34,7 +34,6 @@ class AuthenticationWrapper extends StatelessWidget {
         }
 
         if (user == null) return WelcomeScreen();
-
         // ignore: dead_code
         if (!user.emailVerified) {
           return ChangeNotifierProvider(
@@ -51,14 +50,14 @@ class AuthenticationWrapper extends StatelessWidget {
             }
             var user = snapshot.data?.key;
             var sirket = snapshot.data?.value;
-
+            bas("user?.id");
+            bas(user?.id);
             if (user?.id == null) {
               return ChangeNotifierProvider(
                 create: (context) => ProfileViewModel(
                     AuthService().currentUserId!,
                     editing: true,
-                    verify: true
-                    ),
+                    verify: true),
                 child: ProfileView(),
               );
             }

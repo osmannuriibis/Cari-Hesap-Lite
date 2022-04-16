@@ -19,6 +19,6 @@ void bas(Object? value, [Object? thisObject]) {
       time: DateTime.now(),
     );
   } else {
-    log("null");
+    log('null');
   }
 }

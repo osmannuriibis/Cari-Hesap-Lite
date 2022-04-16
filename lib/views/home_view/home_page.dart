@@ -4,21 +4,22 @@ import 'package:cari_hesapp_lite/components/dialogs/show_alert_dialog.dart';
 import 'package:cari_hesapp_lite/components/scroll_column.dart';
 import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
+import 'package:cari_hesapp_lite/enums/irsaliye_turu_enum.dart';
 import 'package:cari_hesapp_lite/enums/siparis_status.dart';
-import 'package:cari_hesapp_lite/models/kartlar/cari_kart.dart';
+import 'package:cari_hesapp_lite/models/cari_islem.dart';
+import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/siparis_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/date_format.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view.dart';
 import 'package:cari_hesapp_lite/views/cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view_model.dart';
 import 'package:cari_hesapp_lite/views/home_view/components/drawer/home_driwer_list.dart';
 import 'package:cari_hesapp_lite/views/home_view/home_view_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cari_hesapp_lite/views/siparis/siparis_add_view.dart';
+import 'package:cari_hesapp_lite/views/siparis/siparis_add_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/constants.dart';
@@ -42,6 +43,8 @@ class HomeView extends StatelessWidget {
 
     var myPanelList = viewModel.myPanels;
     var listSiparis = viewModel.listSiparis;
+    var listTransactions = viewModel.listTransaction;
+    var listIncome = viewModel.listIncome;
 
     /*  FirebaseFirestore.instance
         .collection("collectionPath")
@@ -76,70 +79,22 @@ class HomeView extends StatelessWidget {
                   },
                 ),
               ),
-              IconButton(
-                  onPressed: () async {},
-                  icon: const Icon(Icons.question_answer))
             ],
             titleText: userProvider.sirketModel?.unvani ?? "___",
           ),
           body: MyColumn(
             children: [
-              /*        ExpansionPanelList(
-                animationDuration: kThemeAnimationDuration * 3,
-                expandedHeaderPadding: const EdgeInsets.all(15),
-                elevation: 2,
-                expansionCallback: (panelIndex, isExpanded) {
-                  viewModelUnlistened.myPanels[panelIndex].isExpanded =
-                      !isExpanded;
-
-                  //notifyListener'i tetiklemek için
-                  viewModelUnlistened.myPanels = viewModelUnlistened.myPanels;
-                  bas(isExpanded);
-                  bas(panelIndex);
-                  bas(viewModel.myPanels.first.isExpanded);
-                },
-                children: [
-                  for (var panel in myPanelList)
-                    ExpansionPanel(
-                      canTapOnHeader: true,
-                      headerBuilder: panel.headerBuilder,
-                      body: panel.body!,
-                      isExpanded: panel.isExpanded,
-                    )
-                ],
-              ),
-          */
-
-              _ordersArea(listSiparis),
+              _ordersArea(context, listSiparis),
+              const Divider(),
+              transactionArea(context, listTransactions),
+              const Divider(),
+              incomingArea(context, listTransactions, listIncome),
             ],
           ),
           drawerEdgeDragWidth: width(context) / 2,
-          
-          persistentFooterButtons: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CloseButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.currentUser!.reload();
-                  },
-                ),
-              ],
-            ),
-            ElevatedButton(
-              child: const Text("asd"),
-              style: ElevatedButton.styleFrom(primary: kPrimaryColor),
-              onPressed: () async {
-                bas(userProvider.sirketModel);
-                bas("userProvider.sirketModel");
-                bas(userProvider.userModel);
-                bas("userProvider.userModel");
-              },
-            )
-          ],
-          drawer: HomeDrawer(
 
-            drawerList: HomeDrawerList(),
+          drawer: HomeDrawer(
+            drawerList: const HomeDrawerList(),
             header: Header(),
           ),
         ),
@@ -147,9 +102,9 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  MyCard _ordersArea(List<SiparisModel> listSiparis) {
+  MyCard _ordersArea(BuildContext context, List<SiparisModel> listSiparis) {
     listSiparis.sort((e, y) => e.siparisTarihi!.compareTo(y.siparisTarihi!));
-
+    
     return MyCard(
         margin: const EdgeInsets.only(top: 18),
         title: const Text("Siparisler"),
@@ -159,20 +114,33 @@ class HomeView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text("Yeni Sipariş"),
                   IconButton(
-                      onPressed: () {
-                        /*  goToView(context,
-                            viewToGo: SiparisAddView(),
-                            viewModel: SiparisAddViewModel.addNew(
-                                cariIslemTuru: cariIslemTuru,
-                                cariKart: cariKart)); */
+                      onPressed: () async {
+                        var cariKart = await getCariKartByPop(context);
+                        if (cariKart != null) {
+                          goToView(context,
+                              viewToGo: SiparisAddView(),
+                              viewModel: SiparisAddViewModel.addNew(
+                                  cariIslemTuru: CariIslemTuru.satis,
+                                  cariKart: cariKart));
+                        }
+                        /**/
                       },
-                      icon: const Icon(FontAwesomeIcons.plus))
+                      icon: const Icon(
+                        Icons.add_circle_outline_rounded,
+                      ))
                 ],
               ),
+              const Divider(height: 5),
+              /*   if (listSiparis.isEmpty)
+                const ListTile(
+                  title: Text("Sipariş yok"),
+                )
+              else */
               ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -211,8 +179,120 @@ class HomeView extends StatelessWidget {
         ]);
   }
 
+  Widget transactionArea(BuildContext context, List<CariIslemModel> list) {
+    // ignore: prefer_const_constructors
+    return MyCard(
+      title: const Text("İşlemler"),
+      child: ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          if (list.isEmpty)
+            const ListTile(
+              title: Text("Veri yok"),
+            ),
+          for (var cariIslem in list)
+            ListTile(
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(cariIslem.cariUnvani ?? ""),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                          cariIslem.toplam != null
+                              ? cariIslem.toplam!.toStringAsFixed(2) + " ₺"
+                              : "",
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.red)),
+                    ),
+                  ]),
+              subtitle: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text((cariIslem.evrakTuru != null
+                        ? cariIslem.evrakTuru!.stringValue
+                        : "") +
+                    " - " +
+                    (cariIslem.islemTuru?.stringValue ?? "")),
+              ),
+              trailing: const Icon(Icons.keyboard_arrow_right),
+              /*   leading: CircleAvatar(
+                    child: cariIslem.imagePath != null
+                        ? Image.network(cariIslem.imagePath)
+                        : Center(
+                            child: Text(cariIslem.unvani[0].toUpperCase()),
+                          ),
+                  ), */
+              onTap: () async {
+                var cariKart =
+                    await DBUtils().getCariKartById(cariIslem.cariId!);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChangeNotifierProvider(
+                            create: (context) =>
+                                CariTransactionAddViewModel.showExistHareket(
+                                    cariIslem, cariKart),
+                            child: const CariTransactionAddView())));
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  incomingArea(BuildContext context, List<CariIslemModel> listTransactions,
+      List<HesapHareketModel> listIncome) {
+  
+    num gelir = 0, satis = 0;
+
+    for (var item in listTransactions) {
+      satis += (item.toplamTutar ?? 0);
+    }
+    for (var item in listIncome) {
+      gelir += item.toplamTutar ?? 0;
+    }
+
+    return MyCard(
+      title: const Text("Günlük Rapor"),
+      child: Row(
+        children: [
+          _incomeCard(context, title: "Satış", amount: satis),
+          const SizedBox(width: 4),
+          _incomeCard(context, title: "Gelir", amount: gelir),
+        ],
+      ),
+    );
+  }
+
   // ignore: non_constant_identifier_names
 
+}
+
+Widget _incomeCard(BuildContext context,
+    {required String title, required num amount}) {
+  return Expanded(
+      child: AspectRatio(
+    aspectRatio: 2,
+    child: Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          border: Border.all(width: 0.25),
+          color: Colors.amber.shade50,
+          borderRadius: BorderRadius.circular(5)),
+      child: Center(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(title),
+          Text(
+            amount.toStringAsFixed(2) + " ₺",
+            style: context.textTheme.headline6,
+          ),
+        ],
+      )),
+    ),
+  ));
 }
 
 class SiparisTile extends StatelessWidget {
@@ -225,7 +305,6 @@ class SiparisTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = Timestamp.now();
     return ExpansionTile(
         title: Text(siparisModel.cariAdi ?? ""),
         subtitle: siparisModel.siparisTarihi != null
@@ -308,20 +387,28 @@ class SiparisTile extends StatelessWidget {
               ],
             )
         ],
-        collapsedBackgroundColor:
-            (siparisModel.siparisTarihi!.compareTo(today) < 1)
-                ? (siparisModel.siparisStatus == SiparisStatus.islemeCevrildi
-                    ? null
-                    : siparisModel.siparisStatus == SiparisStatus.olusturuldu
-                        ? Colors.red.shade100
-                        : null)
-                : siparisModel.siparisStatus == SiparisStatus.islemeCevrildi
-                    ? Colors.green.shade100
-                    : null,
         trailing: siparisModel.siparisStatus == SiparisStatus.iptalEdildi
             ? const Text("İptal edildi")
             : (siparisModel.siparisStatus == SiparisStatus.olusturuldu
-                ? const Text("Beklemede")
-                : const Text("İşlendi")));
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Beklemede"),
+                      CircleAvatar(
+                        maxRadius: 10,
+                        backgroundColor: Colors.red.shade700,
+                      )
+                    ],
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("İşlendi"),
+                      CircleAvatar(
+                        maxRadius: 10,
+                        backgroundColor: Colors.green.shade700,
+                      )
+                    ],
+                  )));
   }
 }

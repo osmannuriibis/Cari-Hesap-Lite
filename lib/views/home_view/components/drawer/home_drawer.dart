@@ -1,4 +1,3 @@
-
 import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -323,7 +322,6 @@ class HomeDrawer extends StatelessWidget {
       child:  */
         Drawer(
       child: Container(
-        padding: const EdgeInsets.only(left: 15.0, right: 15),
         decoration: const BoxDecoration(
             color: Colors.white, boxShadow: [BoxShadow(color: Colors.black45)]),
         width: 300,
@@ -388,7 +386,10 @@ class HomeDrawer extends StatelessWidget {
                 /// ---------------------------
 
                 const SizedBox(height: 10.0),
-                drawerList
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: drawerList,
+                )
               ],
             ),
           ),
@@ -402,7 +403,7 @@ class HomeDrawer extends StatelessWidget {
 
 Widget _buildRow(IconData icon, String lable,
     {bool showBadge = false, required VoidCallback onPressed}) {
-   TextStyle tStyle = const TextStyle(color: kPrimaryColor, fontSize: 16.0);
+  TextStyle tStyle = const TextStyle(color: kPrimaryColor, fontSize: 16.0);
   return GestureDetector(
     onTap: onPressed,
     child: Container(

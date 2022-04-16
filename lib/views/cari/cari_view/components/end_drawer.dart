@@ -44,9 +44,8 @@ class CariViewEndDrawer extends StatelessWidget {
             const Divider(),
             _EndDrawerItem(
               title: "SATIŞ",
-              iconData: Icons.shop,
+              iconData: Icons.swipe_up_alt_outlined,
               onTap: () {
-                bas('e çalışıyoor');
                 closeDrawer();
 
                 addCariTransaction(CariIslemTuru.satis);
@@ -54,38 +53,28 @@ class CariViewEndDrawer extends StatelessWidget {
             ),
             _EndDrawerItem(
               title: "ALIŞ",
-              iconData: Icons.shop,
+              iconData: Icons.swipe_down_alt_outlined,
               onTap: () {
                 addCariTransaction(CariIslemTuru.alis);
               },
             ),
             _EndDrawerItem(
               title: "TAHSİLAT",
-              iconData: Icons.shop,
+              iconData: Icons.switch_left_sharp,
               onTap: () {
-                showSelectDialog().then((val) {
-                  if (val == HesapHareketTuru.nakit) {
-                    Navigator.pop(context);
-                    addCashOrEftAccountTransaction(GelirGiderTuru.gelir);
-                  } else if (val == HesapHareketTuru.cek) {}
-                });
+                addCashOrEftAccountTransaction(GelirGiderTuru.gelir);
               },
             ),
             _EndDrawerItem(
               title: "ÖDEME YAP",
-              iconData: Icons.shop,
+              iconData: Icons.switch_right_sharp,
               onTap: () {
-                showSelectDialog().then((val) {
-                  if (val == HesapHareketTuru.nakit) {
-                    Navigator.pop(context);
-                    addCashOrEftAccountTransaction(GelirGiderTuru.gider);
-                  } else if (val == HesapHareketTuru.cek) {}
-                });
+                addCashOrEftAccountTransaction(GelirGiderTuru.gider);
               },
             ),
             _EndDrawerItem(
               title: "SİPARİŞ",
-              iconData: Icons.library_books,
+              iconData: Icons.select_all_outlined,
               onTap: () async {
                 var islemTuru = await showAlertDialog<CariIslemTuru>(context,
                     title: "Sipariş Türünü Seçiniz",
@@ -223,7 +212,7 @@ class CariViewEndDrawer extends StatelessWidget {
               child: _EndDrawerItem(
                 title: "KAPAT",
                 textColor: Colors.red,
-                iconData: Icons.close_sharp,
+                iconData: Icons.exit_to_app,
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -246,13 +235,6 @@ class CariViewEndDrawer extends StatelessWidget {
               child: const CariTransactionAddView()),
         )).then((value) {
       // ignore: curly_braces_in_flow_control_structures
-      if (value != null) if (value) {
-        showAlertDialog(context,
-            title: "işlem ekle",
-            content: const Center(
-              child: Text("İşlem tamam ya şimdi?"),
-            ));
-      }
     });
   }
 
@@ -271,44 +253,6 @@ class CariViewEndDrawer extends StatelessWidget {
 
   void closeDrawer() {
     Navigator.pop(context);
-  }
-
-  Future<HesapHareketTuru?> showSelectDialog() {
-    return showDialog<HesapHareketTuru>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Seçiniz"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text(
-                "Nakit / Havale&EFT",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {
-                Navigator.pop<HesapHareketTuru>(
-                    context, HesapHareketTuru.nakit);
-              },
-            ),
-            ListTile(
-                title: const Text(
-                  "Çek/Senet",
-                  style: TextStyle(fontSize: 18),
-                ),
-                onTap: () {
-                  Navigator.pop<HesapHareketTuru>(
-                      context, HesapHareketTuru.cek);
-                }),
-            const ListTile(
-                title: Text(
-              "Diğer...",
-              style: TextStyle(fontSize: 18),
-            )),
-          ],
-        ),
-      ),
-    );
   }
 }
 

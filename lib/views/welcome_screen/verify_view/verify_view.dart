@@ -18,6 +18,7 @@ class VerifyView extends StatelessWidget {
         titleText: "Email Doğrulama",
         actions: [
           IconButton(
+              tooltip: MaterialLocalizations.of(context).closeButtonLabel,
               onPressed: () {
                 AuthService().signOut();
               },
@@ -28,7 +29,8 @@ class VerifyView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-              "Email Doğrulama Mail'i\n${AuthService().currentUserEmail}\nadresine gönderildi"),
+              """Email Doğrulama E-Mail'i\n${AuthService().currentUserEmail}\nadresine gönderildi.
+(Spam klasörünü kontrol ediniz)"""),
           RoundedButton("TEKRAR GÖNDER", onPressed: viewModel.sendVerify)
         ],
       ),

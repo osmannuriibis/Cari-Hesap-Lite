@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
+import 'package:cari_hesapp_lite/models/cari_islem.dart';
+import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/siparis_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
@@ -17,8 +20,21 @@ class HomeViewModel extends ChangeNotifier {
   var dbUtil = DBUtils();
 
   late StreamSubscription<List<SiparisModel>> entrySiparis;
+  late StreamSubscription<List<CariIslemModel>> entryTransactions;
+  late StreamSubscription<List<HesapHareketModel>> entryIncome;
 
   List<SiparisModel> _listSiparis = [];
+
+  var _listTransaction = <CariIslemModel>[];
+
+  var listIncome = <HesapHareketModel>[];
+
+  set listTransaction(List<CariIslemModel> value) {
+    _listTransaction = value;
+    notifyListeners();
+  }
+
+  List<CariIslemModel> get listTransaction => _listTransaction;
 
   List<SiparisModel> get listSiparis => _listSiparis;
 
@@ -29,6 +45,8 @@ class HomeViewModel extends ChangeNotifier {
 
   HomeViewModel() {
     fetchSiparisList();
+    fetchTransactionList();
+    fetchIncomeList();
   }
 
   List<MyExpansionPanels> _myPanels = [
@@ -54,7 +72,6 @@ class HomeViewModel extends ChangeNotifier {
                   size: 40,
                 ),
                 onPressed: () {
-                  bas("object");
                 },
               )
             ],
@@ -84,17 +101,47 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void fetchSiparisList() {
-    bas("fetch Siiparsiler");
-    entrySiparis = DBUtils().getModelListAsStream<SiparisModel>().call(
+    entrySiparis = dbUtil.getModelListAsStream<SiparisModel>().call(
       (event) {
         listSiparis = event;
       },
     );
   }
 
+  void fetchIncomeList() {
+    var date = DateTime.now();
+    date = DateTime(date.year, date.month, date.day);
+
+    entryIncome = dbUtil.getModelListAsStream<HesapHareketModel>([
+      MapEntry(MapEntry("islemTarihi", Timestamp.fromDate(date)),
+          FirestoreClause.isGreaterThanOrEqualTo),
+    ]).call(
+      (event) {
+        listIncome = event;
+        notifyListeners();
+      },
+    );
+  }
+
+  void fetchTransactionList() {
+    var date = DateTime.now();
+    date = DateTime(date.year, date.month, date.day);
+
+    entryTransactions = dbUtil.getModelListAsStream<CariIslemModel>([
+      MapEntry(MapEntry("islemTarihi", Timestamp.fromDate(date)),
+          FirestoreClause.isGreaterThanOrEqualTo),
+      /*   MapEntry(MapEntry("islemTuru", transactionListType.stringValue),
+          FirestoreClause.isEqualTo), */
+    ]).call((value) {
+      value.sort((e, y) => e.islemTarihi!.compareTo(y.islemTarihi!));
+      listTransaction = value;
+    });
+  }
+
   @override
   void dispose() {
     entrySiparis.cancel();
+    entryTransactions.cancel();
     super.dispose();
   }
 
