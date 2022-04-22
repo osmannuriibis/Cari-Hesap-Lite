@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
 import 'package:cari_hesapp_lite/enums/siparis_status.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

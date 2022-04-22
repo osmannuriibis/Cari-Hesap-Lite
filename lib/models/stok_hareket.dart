@@ -44,6 +44,7 @@ class StokHareket extends BaseModel {
   String depoId = "main";
 
   num? miktar;
+  String? birim;
   num? islemFiyati;
 
   num? tutar; //ürünün değer tutarı ->  miktar X islemFiyati
@@ -75,6 +76,7 @@ class StokHareket extends BaseModel {
     this.urunId,
     this.urunAdi,
     this.miktar,
+     this.birim,
     this.islemFiyati,
     this.tutar,
     this.iskontoOrani,
@@ -96,6 +98,7 @@ class StokHareket extends BaseModel {
     String? urunId,
     String? urunAdi,
     num? miktar,
+     String? birim,
     num? islemFiyati,
     num? tutar,
     num? iskontoOrani,
@@ -116,6 +119,7 @@ class StokHareket extends BaseModel {
       urunId: urunId ?? this.urunId,
       urunAdi: urunAdi ?? this.urunAdi,
       miktar: miktar ?? this.miktar,
+      birim: birim ?? this.birim,
       islemFiyati: islemFiyati ?? this.islemFiyati,
       tutar: tutar ?? this.tutar,
       iskontoOrani: iskontoOrani ?? this.iskontoOrani,
@@ -141,6 +145,7 @@ class StokHareket extends BaseModel {
       'urunAdi': urunAdi,
       'depoId': depoId,
       'miktar': miktar,
+      'birim': birim,
       'islemFiyati': islemFiyati,
       'tutar': tutar,
       'iskontoOrani': iskontoOrani,
@@ -170,6 +175,7 @@ class StokHareket extends BaseModel {
       urunId: map['urunId'],
       urunAdi: map['urunAdi'],
       miktar: map['miktar'],
+      birim: map['birim'],
       islemFiyati: map['islemFiyati'],
       tutar: map['tutar'],
       iskontoOrani: map['iskontoOrani'],
@@ -189,7 +195,7 @@ class StokHareket extends BaseModel {
 
   @override
   String toString() {
-    return 'StokHareket(id: $id, cariIslemKodu: $cariIslemKodu, cariIslemTuru: $cariIslemTuru, isSiparis: $isSiparis, cariId: $cariId, cariAdi: $cariAdi, urunId: $urunId, urunAdi: $urunAdi, miktar: $miktar, islemFiyati: $islemFiyati, tutar: $tutar, iskontoOrani: $iskontoOrani, iskontoTutar: $iskontoTutar, netTutar: $netTutar, kdvOran: $kdvOran, kdvTutar: $kdvTutar, toplamTutar: $toplamTutar)';
+    return 'StokHareket(id: $id, cariIslemKodu: $cariIslemKodu, cariIslemTuru: $cariIslemTuru, isSiparis: $isSiparis, cariId: $cariId, cariAdi: $cariAdi, urunId: $urunId, urunAdi: $urunAdi, miktar: $miktar, birim:$birim, islemFiyati: $islemFiyati, tutar: $tutar, iskontoOrani: $iskontoOrani, iskontoTutar: $iskontoTutar, netTutar: $netTutar, kdvOran: $kdvOran, kdvTutar: $kdvTutar, toplamTutar: $toplamTutar)';
   }
 
   @override
@@ -206,6 +212,7 @@ class StokHareket extends BaseModel {
         other.urunId == urunId &&
         other.urunAdi == urunAdi &&
         other.miktar == miktar &&
+        other.birim == birim &&
         other.islemFiyati == islemFiyati &&
         other.tutar == tutar &&
         other.iskontoOrani == iskontoOrani &&
@@ -227,7 +234,7 @@ class StokHareket extends BaseModel {
         urunId.hashCode ^
         urunAdi.hashCode ^
         miktar.hashCode ^
-        islemFiyati.hashCode ^
+        birim.hashCode ^
         tutar.hashCode ^
         iskontoOrani.hashCode ^
         iskontoTutar.hashCode ^

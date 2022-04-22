@@ -1,9 +1,10 @@
 import 'package:cari_hesapp_lite/components/appbar/my_app_bar.dart';
 import 'package:cari_hesapp_lite/components/buttons/base_primary_button.dart';
 import 'package:cari_hesapp_lite/components/card/custom_card.dart';
+import 'package:cari_hesapp_lite/components/dialogs/show_alert_dialog.dart';
 import 'package:cari_hesapp_lite/components/scroll_column.dart';
-import 'package:cari_hesapp_lite/components/text_fields/my_field_with_label.dart';
 import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
+import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/stok/stok_add_view/stok_add_view.dart';
 import 'package:cari_hesapp_lite/views/stok/stok_add_view/view_model/stok_add_view_model.dart';
@@ -80,7 +81,46 @@ class StokView extends StatelessWidget {
                             ("%" + (viewModel.stokKart.kdv ?? 0).toString())),
                   ],
                 )),
-                MyBaseButton(onPressed: () {}, buttonText: "Düzenle")
+                MyBaseButton(
+                    onPressed: () {
+                      goToView(context,
+                          viewToGo: const StokAddView(),
+                          viewModel: StokAddViewModel.showExistStok(
+                              stokKart: viewModel.stokKart));
+                    },
+                    buttonText: "Düzenle"),
+                const Divider(),
+                MyBaseButton(
+                    onSurface: Colors.red,
+                    onPressed: () async {
+                      if ((await showAlertDialog<bool?>(context,
+                              title: "UYARI",
+                              content: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                    "Ürün tamamen silicenek.\nDevam etmek istiyor musunuz?"),
+                              ),
+                              actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                                child: const Text(
+                                  "Vazgeç",
+                                  style: TextStyle(color: Colors.red),
+                                )),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, true);
+                                },
+                                child: const Text("Evet")),
+                          ]))
+                          .exactlyTrue) {
+                        viewModel.deleteStok();
+                        Navigator.pop(context);
+                      }
+                    },
+                    buttonText: "Sil")
               ],
             ),
             MyCard(

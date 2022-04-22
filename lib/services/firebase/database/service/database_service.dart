@@ -7,7 +7,6 @@ import 'package:cari_hesapp_lite/models/kartlar/cari_kart.dart';
 import 'package:cari_hesapp_lite/models/kartlar/stok_kart.dart';
 import '../../../../models/bilgiler/bilgiler.dart';
 import '../../../../models/cari_islem.dart';
-import '../../../../models/deneme_model.dart';
 
 import '../../../../models/fiyatlar.dart';
 import 'package:cari_hesapp_lite/models/base_model/base_model.dart';
@@ -80,9 +79,7 @@ class DBService {
     ///                             /id
     ///                                /bagliBankId
 
- else if (T == DenemeModel) {
-      return _getTablesPath + _denemePath;
-    } else if (T == HesapHareketModel) {
+ else if (T == HesapHareketModel) {
       return _getTablesPath + _hesapHareketPath;
     }  else if (T == SiparisModel) {
       return _getTablesPath + _siparisler;
@@ -119,7 +116,7 @@ class DBService {
   String get _bilgilerPath => "bilgiler";
   String get _fiyatlarPath => "bilgiler/fiyatlar/fiyatlar";
 
-  String get _denemePath => "deneme";
+  
   String get _siparisler => "siparisler";
 }
 

@@ -1,5 +1,8 @@
 import 'package:cari_hesapp_lite/components/cp_indicators/cp_indicator.dart';
+import 'package:cari_hesapp_lite/components/dialogs/show_alert_dialog.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
+import 'package:cari_hesapp_lite/utils/extensions.dart';
+import 'package:cari_hesapp_lite/utils/print.dart';
 
 import '../../../../components/appbar/my_app_bar.dart';
 import '../../../../enums/irsaliye_turu_enum.dart';
@@ -30,10 +33,10 @@ class CariTransactionListView extends StatelessWidget {
   Widget build(BuildContext context) {
     viewModel = Provider.of<CariTransactionsListViewModel>(context);
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      //resizeToAvoidBottomInset: false,
       // resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
-      extendBody: true,
+      //  extendBody: true,
       appBar: MyAppBar(
         automaticallyImplyLeading: !viewModel.isSearchPressed,
         title: AnimatedSwitcher(
@@ -105,12 +108,11 @@ class CariTransactionListView extends StatelessWidget {
       body: SafeArea(
         child: Container(
           margin: const EdgeInsets.only(bottom: 10),
-          color: Color.fromARGB(255, 241, 240, 236),
           child: AnimatedSize(
             duration: const Duration(milliseconds: 400),
             child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
               itemCount: viewModel.listTransactions.length,
-              reverse: true,
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 CariIslemModel cariIslem = viewModel.listTransactions[index];
@@ -163,12 +165,43 @@ class CariTransactionListView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FAB(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => ShowAlertDialog(
-                viewModel.islemTuru == CariIslemTuru.satis, context),
-          );
+        onPressed: () async {
+          var res = await showAlertDialog<bool?>(context,
+              title: "İşlem",
+              content: Text("${viewModel.islemTuru.stringValue} Ekle"),
+              actions: [
+                TextButton(
+                  child: const Text("TAMAM"),
+                  onPressed: () async {
+                    //CariİşlemView'da yeni [islemTuru] işlemi=>
+
+                    Navigator.pop(context, true);
+                  },
+                ),
+              ]);
+
+          if (res.exactlyTrue) {
+            CariKart? carikart = await goToView<CariKart, CariListViewModel>(
+                context,
+                viewToGo: CariListView(),
+                viewModel: CariListViewModel());
+
+            if (carikart == null) return;
+
+            var viewModelAddCariTransaction =
+                CariTransactionAddViewModel.addNewHareket(
+              cariIslemTuru: viewModel.islemTuru,
+              cariKart: carikart,
+            );
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider(
+                      create: (context) => viewModelAddCariTransaction,
+                      child: const CariTransactionAddView()),
+                ));
+          }
 
           // Navigator.pop(contextt);
         },
@@ -177,60 +210,3 @@ class CariTransactionListView extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
-class ShowAlertDialog extends StatefulWidget {
-  bool isSwitched;
-
-  BuildContext context;
-
-  ShowAlertDialog(
-    this.isSwitched,
-    this.context, {
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  _ShowAlertDialogState createState() => _ShowAlertDialogState();
-}
-
-class _ShowAlertDialogState extends State<ShowAlertDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return CustomAlertDialog(
-      title: ((widget.isSwitched)
-              ? CariIslemTuru.satis.stringValue
-              : CariIslemTuru.alis.stringValue) +
-          " Ekle",
-      content: null,
-      actions: [
-        TextButton(
-          child: const Text("TAMAM"),
-          onPressed: () async {
-            Navigator.pop(context);
-
-            //CariİşlemView'da yeni [islemTuru] işlemi=>
-
-            CariKart? carikart = await goToView<CariKart, CariListViewModel>(
-                context,
-                viewToGo: CariListView(),
-                viewModel: CariListViewModel());
-
-            if (carikart != null) {
-              var viewModelAddCariTransaction =
-                  CariTransactionAddViewModel.addNewHareket(
-                cariIslemTuru: (widget.isSwitched)
-                    ? CariIslemTuru.satis
-                    : CariIslemTuru.alis,
-                cariKart: carikart,
-              );
-
-              goToView(context,
-                  viewToGo: const CariTransactionAddView(),
-                  viewModel: viewModelAddCariTransaction);
-            }
-          },
-        ),
-      ],
-    );
-  }
-}

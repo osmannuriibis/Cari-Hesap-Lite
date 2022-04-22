@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cari_hesapp_lite/enums/cari_turu.dart';
 import 'package:cari_hesapp_lite/enums/para_birimi.dart';
 import 'package:cari_hesapp_lite/models/base_model/bakiyeli_model.dart';
-import 'package:cari_hesapp_lite/models/base_model/base_model.dart';
 
 import 'package:cari_hesapp_lite/models/konum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class CariKart extends BakiyeliBaseModel {
+  @override
   String? id;
   String? unvani;
   String? imagePath;
@@ -106,6 +106,7 @@ class CariKart extends BakiyeliBaseModel {
     );
   } */
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -175,30 +176,30 @@ class CariKart extends BakiyeliBaseModel {
   }
 
   @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
 
-    return o is CariKart &&
-        o.id == id &&
-        o.unvani == unvani &&
-        o.imagePath == imagePath &&
-        o.kayitTarihi == kayitTarihi &&
-        o.cariTuru == cariTuru &&
-        listEquals(o.telNo, telNo) &&
-        o.email == email &&
-        o.konum == konum &&
-        o.adres == adres &&
-        o.sehir == sehir &&
-        o.ilce == ilce &&
-        o.bakiye == bakiye &&
-        o.vergiDairesi == vergiDairesi &&
-        o.vergiNo == vergiNo &&
-        o.ekBilgi == ekBilgi &&
-        o.cariGrup == cariGrup &&
-        o.siniflandirma == siniflandirma &&
-        o.riskLimiti == riskLimiti &&
-        o.uyariMesaji == uyariMesaji &&
-        o.aciklama == aciklama;
+    return other is CariKart &&
+        other.id == id &&
+        other.unvani == unvani &&
+        other.imagePath == imagePath &&
+        other.kayitTarihi == kayitTarihi &&
+        other.cariTuru == cariTuru &&
+        listEquals(other.telNo, telNo) &&
+        other.email == email &&
+        other.konum == konum &&
+        other.adres == adres &&
+        other.sehir == sehir &&
+        other.ilce == ilce &&
+        other.bakiye == bakiye &&
+        other.vergiDairesi == vergiDairesi &&
+        other.vergiNo == vergiNo &&
+        other.ekBilgi == ekBilgi &&
+        other.cariGrup == cariGrup &&
+        other.siniflandirma == siniflandirma &&
+        other.riskLimiti == riskLimiti &&
+        other.uyariMesaji == uyariMesaji &&
+        other.aciklama == aciklama;
   }
 
   @override

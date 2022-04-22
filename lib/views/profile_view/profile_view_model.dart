@@ -4,9 +4,7 @@ import 'package:cari_hesapp_lite/models/user_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/service/database_service.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ProfileViewModel extends ChangeNotifier {
@@ -40,7 +38,6 @@ class ProfileViewModel extends ChangeNotifier {
 
   var dbUtil = DBUtils();
   var auth = AuthService();
-  bool _isBottomOpen = false;
 
   bool _isEditing = false;
 
@@ -130,12 +127,6 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isBottomOpen => _isBottomOpen;
-
-  set isBottomOpen(bool value) {
-    _isBottomOpen = value;
-    notifyListeners();
-  }
 
   void setController() {
   

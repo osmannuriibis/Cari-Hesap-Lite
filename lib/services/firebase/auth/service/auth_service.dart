@@ -30,40 +30,32 @@ class AuthService extends ChangeNotifier {
 
   Future<UserCredential?> singInWEAP(
       {required String email, required String password}) async {
-    try {
-      return await auth
-          .signInWithEmailAndPassword(
-            email: email,
-            password: password,
-          )
-          .then<UserCredential>((user) => user);
-    } catch (e) {
-
-      return null;
-    }
+    return await auth
+        .signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        )
+        .then<UserCredential>((user) => user);
   }
 
-  Future<UserCredential?> createUserWEAP(
+  Future<UserCredential> createUserWEAP(
       {required String email, required String password}) async {
-    try {
+  
       return await auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((user) => user);
-    } catch (e) {
-      
-      return null;
-    }
+  
   }
 
   Future<void> sendVerification() {
-    
-    return  auth.currentUser!.sendEmailVerification();
-    
+    return auth.currentUser!.sendEmailVerification();
   }
 
   signOut() async {
     await auth.signOut();
     notifyListeners();
+
+    
   }
 
   Future<String?> updatePassword(String newPassword) async {

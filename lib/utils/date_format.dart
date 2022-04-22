@@ -43,7 +43,7 @@ String timeFormatterToString(Timestamp time) {
 }
 
 String timeOfDayFormatterToString(TimeOfDay time) {
-   _localizations = DefaultMaterialLocalizations();
+   _localizations = const DefaultMaterialLocalizations();
    return _localizations.formatTimeOfDay(time, alwaysUse24HourFormat: true);
 
   

@@ -1,13 +1,10 @@
 import 'package:cari_hesapp_lite/components/appbar/my_app_bar.dart';
 import 'package:cari_hesapp_lite/models/kartlar/cari_kart.dart';
-import 'package:cari_hesapp_lite/utils/my_view_progress_indicator.dart';
-import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/place_picker_package/lib/place_picker.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../components/cp_indicators/cp_indicator.dart';
+import '../../../components/scroll_column.dart';
 import '../../../components/switch/primary_switch.dart';
 import '../../../constants/constants.dart';
 import '../cari_add_view/cari_add_view.dart';
@@ -19,6 +16,7 @@ import 'package:provider/provider.dart';
 
 mixin type implements CariView {}
 
+// ignore: must_be_immutable
 class CariListView extends StatelessWidget {
   String sorting = "konum";
 
@@ -29,7 +27,6 @@ class CariListView extends StatelessWidget {
   Widget build(BuildContext context) {
     viewModel = Provider.of<CariListViewModel>(context);
 
-    Widget titleAppBar;
 
     var list = viewModel.listBase;
     return Scaffold(
@@ -70,6 +67,7 @@ class CariListView extends StatelessWidget {
                       offset: Offset.zero,
                       initialValue: "unvan",
                       onSelected: (value) {
+                        
                         viewModel.sortField = value;
                       },
                       icon: const Icon(Icons.sort),
@@ -94,9 +92,10 @@ class CariListView extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
+      body: MyColumn(
         children: [
           ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             separatorBuilder: (context, index) => const Divider(),
             itemCount: list.length,

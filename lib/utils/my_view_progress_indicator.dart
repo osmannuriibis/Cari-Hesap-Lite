@@ -1,5 +1,4 @@
 import 'package:cari_hesapp_lite/components/cp_indicators/cp_indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyViewProgressUtil {
@@ -32,8 +31,8 @@ class MyViewProgressUtil {
       barrierColor: barrierColor,
       context: context!,
       
-      builder: (context) => Center(
-        child: CPIndicator(),
+      builder: (context) => const Center(
+        child: CPIndicator()
       ),
     );
   }
@@ -44,7 +43,8 @@ class MyViewProgressUtil {
 
       context = null;
       return true;
-    } else
+    } else {
       return false;
+    }
   }
 }

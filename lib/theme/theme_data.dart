@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 class MyThemeData /*  extends ThemeData  */ {
   late BuildContext context;
   MyThemeData(this.context);
-  
 
   ThemeData themeLight() {
     return ThemeData(
@@ -14,7 +13,7 @@ class MyThemeData /*  extends ThemeData  */ {
 
       //accentColor: kAccentColor,
       scaffoldBackgroundColor: Colors.grey.shade50,
-      fontFamily: "Quicksand",
+      fontFamily: "Comfortaa",
 
       textButtonTheme:
           TextButtonThemeData(style: Theme.of(context).textButtonTheme.style),

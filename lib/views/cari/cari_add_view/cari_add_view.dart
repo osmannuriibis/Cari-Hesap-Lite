@@ -5,7 +5,6 @@ import 'package:cari_hesapp_lite/components/scroll_column.dart';
 import 'package:cari_hesapp_lite/constants/cari_siniflandirma.dart';
 import 'package:cari_hesapp_lite/enums/bu_nedir.dart';
 import 'package:cari_hesapp_lite/models/bilgiler/bilgiler_util/cari_grup.dart';
-import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/place_picker.dart';
 import 'package:cari_hesapp_lite/utils/place_picker_package/lib/entities/entities.dart';

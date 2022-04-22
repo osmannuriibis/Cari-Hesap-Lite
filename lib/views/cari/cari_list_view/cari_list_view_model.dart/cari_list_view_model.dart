@@ -13,6 +13,7 @@ import '../../../../enums/cari_turu.dart';
 
 class CariListViewModel extends ChangeNotifier {
   var dbutil = DBUtils();
+  var konumService = KonumService()..requestPermission();
   var currentLocation = KonumService().currentPosition;
 
   bool _isSearchPressed = false;
@@ -41,6 +42,7 @@ class CariListViewModel extends ChangeNotifier {
 
   String? _sortField;
   set sortField(String? value) {
+    if (value == "konum") KonumService().requestPermission();
     _sortField = value;
     notifyListeners();
   }
@@ -73,11 +75,10 @@ class CariListViewModel extends ChangeNotifier {
     _list = _listBase.where((e) => e.cariTuru == cariTuru(isCari)).toList();
 
     _list = filterList(_list, filterText);
-
+    sortByKonum(_list);
     //sortField alanına göre sıralama yapıyor
     if (sortField.isNotEmptyOrNull) {
       if (sortField! == "unvan") sortByUnvan(_list);
-      if (sortField! == "konum") sortByKonum(_list);
     }
 
     return _list;
@@ -98,20 +99,22 @@ class CariListViewModel extends ChangeNotifier {
   }
 
   void sortByKonum(List<CariKart> list) {
-    list.sort((e, y) {
-      var first = getDistance(
-          currentLocation.asKonum,
-          Konum(
-              latitude: e.konum?.latitude ?? 0,
-              longitude: e.konum?.longitude ?? 0));
-      var second = getDistance(
-          currentLocation.asKonum,
-          Konum(
-              latitude: y.konum?.latitude ?? 0,
-              longitude: y.konum?.longitude ?? 0));
+    if (currentLocation != null) {
+      list.sort((e, y) {
+        var first = getDistance(
+            currentLocation!.asKonum,
+            Konum(
+                latitude: e.konum?.latitude ?? 0,
+                longitude: e.konum?.longitude ?? 0));
+        var second = getDistance(
+            currentLocation!.asKonum,
+            Konum(
+                latitude: y.konum?.latitude ?? 0,
+                longitude: y.konum?.longitude ?? 0));
 
-      return first.compareTo(second);
-    });
+        return first.compareTo(second);
+      });
+    }
   }
 
   void sortByUnvan(List<CariKart> list) {
@@ -125,8 +128,11 @@ class CariListViewModel extends ChangeNotifier {
     if (filterText.isNotEmptyOrNull) {
       for (var item in list) {
         if ((item.toMap()["unvani"] as String)
-            .toLowerCase()
-            .contains(filterText!.toLowerCase())) {
+                .toLowerCase()
+                .contains(filterText!.toLowerCase()) ||
+            (item.toMap()["ekBilgi"] as String)
+                .toLowerCase()
+                .contains(filterText.toLowerCase())) {
           _list.add(item);
         }
       }
@@ -141,14 +147,14 @@ class CariListViewModel extends ChangeNotifier {
     listen.cancel();
     super.dispose();
   }
+
   Widget _hasSearchEntryIcon = const Icon(Icons.clear);
   set hasSearchEntryIcon(Widget widget) {
     _hasSearchEntryIcon = widget;
     notifyListeners();
   }
-    Widget get hasSearchEntryIcon => _hasSearchEntryIcon;
 
-
+  Widget get hasSearchEntryIcon => _hasSearchEntryIcon;
 }
 
 /* extension ListenSnapshot

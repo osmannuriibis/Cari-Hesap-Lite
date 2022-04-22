@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import 'package:cari_hesapp_lite/utils/place_picker_package/lib/widgets/rich_suggestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:cari_hesapp_lite/enums/para_birimi.dart';
-import 'package:cari_hesapp_lite/models/base_model/base_model.dart';
 import 'package:cari_hesapp_lite/models/islemler_model.dart';
 import 'package:cari_hesapp_lite/models/kartlar/cari_kart.dart';
 
@@ -12,6 +10,7 @@ import '../enums/gelir_gider_turu.dart';
 import '../enums/hesap_hareket_turu.dart';
 
 class HesapHareketModel implements Islemler {
+  @override
   String? id;
 
   ///para'nın geldiği birim; firma, cari veya herhangi bir hesap olabilir
@@ -28,6 +27,7 @@ class HesapHareketModel implements Islemler {
 
   ///İşlem bir [CariKart]'a aitse veri tutulur
 
+  @override
   String? cariId;
   @override
   String? cariUnvani;
@@ -39,23 +39,32 @@ class HesapHareketModel implements Islemler {
 
   GelirGiderTuru? gelirGiderTuru;
 
+  @override
   num? toplamTutar;
 
+  @override
   Timestamp? islemTarihi;
 
+  @override
   Timestamp? kayitTarihi;
 
+  @override
   String? evrakNo;
 
+  @override
   String? personelId;
 
+  @override
   String? kullaniciId;
   String? islemNoktasi;
 
+  @override
   String? aciklama;
 
+  @override
   num? kurOrani;
 
+  @override
   String? islemKodu;
   HesapHareketModel({
     this.id,
@@ -86,7 +95,7 @@ class HesapHareketModel implements Islemler {
     String? gidenId,
     String? gidenAdi,
     String? cariId,
-    String? cariUnvani,
+  required String? cariUnvani,
     GelirGiderTuru? gelirGiderTuru,
     HesapHareketTuru? hesapHareketTuru,
     num? toplamTutar,
@@ -123,6 +132,7 @@ class HesapHareketModel implements Islemler {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -136,7 +146,7 @@ class HesapHareketModel implements Islemler {
       'hesapHareketTuru': hesapHareketTuru!.stringValue,
       'paraBirimi': paraBirimi.toMap(),
       'toplamTutar': toplamTutar,
-      'islemTarihi': islemTarihi,
+      'islemTarihi': Timestamp.fromDate(islemTarihi?.toDate().add(const Duration(hours: 12)) ?? DateTime.now()),
       'kayitTarihi': kayitTarihi,
       'evrakNo': evrakNo,
       'personelId': personelId,

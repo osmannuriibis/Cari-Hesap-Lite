@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
 import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/siparis_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -29,6 +27,8 @@ class HomeViewModel extends ChangeNotifier {
 
   var listIncome = <HesapHareketModel>[];
 
+  bool isDrawerOpen = false;
+
   set listTransaction(List<CariIslemModel> value) {
     _listTransaction = value;
     notifyListeners();
@@ -49,56 +49,11 @@ class HomeViewModel extends ChangeNotifier {
     fetchIncomeList();
   }
 
-  List<MyExpansionPanels> _myPanels = [
-    MyExpansionPanels(
-        header: "Sık Kullanılanlar",
-        body: Container(
-          padding: const EdgeInsets.all(10),
-          child: GridView.count(
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            shrinkWrap: true,
-            crossAxisCount: 5,
-            childAspectRatio: 1,
-            children: [
-              Container(
-                color: Colors.redAccent,
-              ),
-              IconButton(
-                tooltip: "Yeni Kısayol Ekle",
-                icon: Icon(
-                  Icons.add_box_outlined,
-                  color: Colors.grey.shade600,
-                  size: 40,
-                ),
-                onPressed: () {
-                },
-              )
-            ],
-          ),
-        ),
-        isExpanded: true),
-    MyExpansionPanels(
-        header: "Raporlar",
-        body: const Center(
-          child: Text(""),
-        ),
-        isExpanded: true),
-    MyExpansionPanels(
-        header: "Akış",
-        body: const Center(
-          child: Text(""),
-        ),
-        isExpanded: true),
-  ];
 
-  List<MyExpansionPanels> get myPanels => _myPanels;
+
 
   bool compareDate(Timestamp date) => (date.compareTo(Timestamp.now()) > 1);
-  set myPanels(List<MyExpansionPanels> value) {
-    _myPanels = value;
-    notifyListeners();
-  }
+
 
   void fetchSiparisList() {
     entrySiparis = dbUtil.getModelListAsStream<SiparisModel>().call(

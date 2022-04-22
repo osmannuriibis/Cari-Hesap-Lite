@@ -1,6 +1,5 @@
 import 'package:cari_hesapp_lite/components/appbar/my_app_bar.dart';
 import 'package:cari_hesapp_lite/components/buttons/rounded_button.dart';
-import 'package:cari_hesapp_lite/components/scroll_column.dart';
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
 import 'package:cari_hesapp_lite/views/welcome_screen/verify_view/verify_view_model.dart';
 import 'package:flutter/material.dart';

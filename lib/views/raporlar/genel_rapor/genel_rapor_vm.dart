@@ -1,4 +1,5 @@
 import 'package:cari_hesapp_lite/models/cari_islem.dart';
+import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/views/raporlar/rapor_view_model.dart';
@@ -6,7 +7,9 @@ import 'package:flutter/material.dart';
 
 class GenelRaporViewModel extends ChangeNotifier {
   late int _dropdownValue;
-  int get dropdownValue => this._dropdownValue;
+
+  var tumHareketList = <HesapHareketModel>[];
+  int get dropdownValue => _dropdownValue;
 
   set dropdownValue(int value) {
     _dropdownValue = value;
@@ -14,9 +17,9 @@ class GenelRaporViewModel extends ChangeNotifier {
   }
 
   RaporViewModel? viewModelBase;
-  late List<CariIslemModel> tumIslemList;
+  late List<CariIslemModel> tumCariIslemList;
 
-  GenelRaporViewModel(this.tumIslemList) {
+  GenelRaporViewModel(this.tumCariIslemList, this.tumHareketList) {
     dropdownValue = aylikIslemlerInYil.keys.firstWhere(
       (element) => element == DateTime.now().year,
       orElse: () => aylikIslemlerInYil.keys.first,
@@ -44,7 +47,7 @@ class GenelRaporViewModel extends ChangeNotifier {
       toplamByYil / ((aylikIslemlerInYil[dropdownValue])?.keys.length ?? 1);
 
   int getYilIcindekiIlkSatisinGectigiGunSayisi() {
-    var list = tumIslemList
+    var list = tumCariIslemList
         .where((element) =>
             element.islemTarihi!.toDate().isAfter(DateTime(dropdownValue)))
         .toList();
@@ -54,26 +57,27 @@ class GenelRaporViewModel extends ChangeNotifier {
         ? list.first.islemTarihi!
             .toDate()
             .difference(
-              //Seçili yıl geçmiş yıl ise yılın son gününü baz alıyor
-              //yoksam içinde bulunduğumuz günün farkını alıyor
-              DateTime.now().year > dropdownValue
-
-                ? DateTime(dropdownValue + 1)
-                : DateTime.now())
+                //Seçili yıl geçmiş yıl ise yılın son gününü baz alıyor
+                //yoksam içinde bulunduğumuz günün farkını alıyor
+                DateTime.now().year > dropdownValue
+                    ? DateTime(dropdownValue + 1)
+                    : DateTime.now())
             .inDays
             .abs()
         : 1;
   }
 
-  num get gunlukOrtSatis =>
-      toplamByYil / getYilIcindekiIlkSatisinGectigiGunSayisi();
+  num get gunlukOrtSatis {
+    return toplamByYil / (getYilIcindekiIlkSatisinGectigiGunSayisi() + 1);
+  }
 
   int get satisMiktari {
     int result = 0;
-    if (aylikIslemlerInYil[dropdownValue] != null)
+    if (aylikIslemlerInYil[dropdownValue] != null) {
       for (var item in aylikIslemlerInYil[dropdownValue]!.values) {
         result += item.length;
       }
+    }
     return result;
   }
 
@@ -96,7 +100,7 @@ class GenelRaporViewModel extends ChangeNotifier {
     for (var yil in (yillar)) {
       num _toplamSatis = 0.0;
 
-      for (var cariIslem in (tumIslemList)) {
+      for (var cariIslem in (tumCariIslemList)) {
         if (yil == cariIslem.islemTarihi!.toDate().year) {
           _toplamSatis += cariIslem.toplamTutar!;
         }
@@ -111,15 +115,15 @@ class GenelRaporViewModel extends ChangeNotifier {
     if (_aylikIslemlerInYil != null) return _aylikIslemlerInYil!;
 
     _aylikIslemlerInYil = {};
-    for (var cariIslem in (tumIslemList)) {
+    for (var cariIslem in (tumCariIslemList)) {
       _aylikIslemlerInYil!.update(
         cariIslem.islemTarihi!.toDate().year,
         (_aylikMap) {
-          _aylikMap ;
+          _aylikMap;
           _aylikMap.update(
             cariIslem.islemTarihi!.toDate().month,
             (value) {
-              value ;
+              value;
               value.add(cariIslem);
               return value;
             },
@@ -139,9 +143,56 @@ class GenelRaporViewModel extends ChangeNotifier {
 
     return _aylikIslemlerInYil!;
   }
+
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+  ///
+
+  num get son30GunlukSatis => tumCariIslemList
+      .where((element) => element.islemTarihi!
+          .toDate()
+          .isAfter(DateTime.now().subtract(const Duration(days: 30))))
+      .toList()
+      .fold<num>(
+          0,
+          (previousValue, element) =>
+              previousValue + (element.toplamTutar ?? 0));
+
+  num get son7GunlukSatis => tumCariIslemList
+      .where((element) => element.islemTarihi!
+          .toDate()
+          .isAfter(DateTime.now().subtract(const Duration(days: 7))))
+      .toList()
+      .fold<num>(
+          0,
+          (previousValue, element) =>
+              previousValue + (element.toplamTutar ?? 0));
+
+  num get son30GunlukTahsilat => tumHareketList
+      .where((element) => element.islemTarihi!
+          .toDate()
+          .isAfter(DateTime.now().subtract(const Duration(days: 30))))
+      .toList()
+      .fold<num>(
+          0,
+          (previousValue, element) =>
+              previousValue + (element.toplamTutar ?? 0));
+
+  num get son7GunlukTahsilat => tumHareketList
+      .where((element) => element.islemTarihi!
+          .toDate()
+          .isAfter(DateTime.now().subtract(const Duration(days: 7))))
+      .toList()
+      .fold<num>(
+          0,
+          (previousValue, element) =>
+              previousValue + (element.toplamTutar ?? 0));
 }
 
 extension QueryDocumentSnapshotExtens on QueryDocumentSnapshot {
-  DateTime get getDuzenlemeTarihi =>
-      (this.get("islemTarihi") as Timestamp).toDate();
+  DateTime get getDuzenlemeTarihi => (get("islemTarihi") as Timestamp).toDate();
 }

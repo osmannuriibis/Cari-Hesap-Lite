@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/islemler_model.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
@@ -68,7 +67,9 @@ class CariViewModel extends ChangeNotifier {
   void getDirection() {
     var latitude = _cariKart.konum?.latitude;
     var longitude = _cariKart.konum?.longitude;
-    if (latitude.isNotNullOrEmpty && latitude.isNotNullOrEmpty) {
+    if (latitude.isNotNullOrEmpty &&
+        latitude.isNotNullOrEmpty &&
+        (_cariKart.konum?.isCertain ?? false)) {
       // ignore: unused_local_variable
       String googleMapslocationUrl =
           "https://www.google.com/maps/search/?api=1&query=${latitude.toString()},${longitude.toString()}";
@@ -137,5 +138,9 @@ class CariViewModel extends ChangeNotifier {
     listenHesapHareket.cancel();
     listenCariKart.cancel();
     super.dispose();
+  }
+
+  void deleteCariKart() {
+    dbUtil.deleteModel(cariKart);
   }
 }

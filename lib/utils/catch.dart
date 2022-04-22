@@ -8,7 +8,7 @@ String fetchCatch(
 ) {
   bas("-HATA---" * 5);
 
-  bas("InRunType : $thisObject  Hata Mesajı: ${err}");
+  bas("InRunType : $thisObject  Hata Mesajı: $err");
 
   if (err.runtimeType == FirebaseException) {
     bas((err as FirebaseException).code);

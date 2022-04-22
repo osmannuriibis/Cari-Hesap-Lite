@@ -1,4 +1,3 @@
-import 'package:cari_hesapp_lite/components/card/custom_card.dart';
 import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
 import 'package:cari_hesapp_lite/enums/gelir_gider_turu.dart';
 import 'package:cari_hesapp_lite/enums/hesap_hareket_turu.dart';
@@ -7,11 +6,15 @@ import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/utils/date_format.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
+import 'package:cari_hesapp_lite/views/account_transaction/add_account_transaction_view/account_transaction_add_view_model.dart';
 import 'package:cari_hesapp_lite/views/cari/cari_view/cari_view_model.dart';
 import 'package:cari_hesapp_lite/views/cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view.dart';
 import 'package:cari_hesapp_lite/views/cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../account_transaction/add_account_transaction_view/account_transaction_add_view.dart';
 
 class CariTransPage extends StatelessWidget {
   late CariViewModel viewModel;
@@ -22,12 +25,15 @@ class CariTransPage extends StatelessWidget {
     viewModel = Provider.of<CariViewModel>(context);
     viewModelUnlistened = Provider.of<CariViewModel>(context, listen: false);
     var list = viewModel.getlist;
+
     return Column(
       children: [
-        const MyCard(
-          padding: EdgeInsets.all(3),
-          child: Text("İşlemler"), /**/
+        const Divider(),
+        Text(
+          "İşlemler",
+          style: context.textTheme.headline6,
         ),
+        const Divider(),
         ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -36,7 +42,6 @@ class CariTransPage extends StatelessWidget {
           itemBuilder: (context, index) {
             var islem = list[index];
 
-
             return Padding(
               padding: const EdgeInsets.all(4.0),
               child: ListTile(
@@ -44,7 +49,9 @@ class CariTransPage extends StatelessWidget {
                     ? (islem as CariIslemModel).islemTuru!.stringValue +
                         ": " +
                         (islem).evrakTuru!.stringValue
-                    : (islem as HesapHareketModel).hesapHareketTuru!.stringValue +
+                    : (islem as HesapHareketModel)
+                            .hesapHareketTuru!
+                            .stringValue +
                         " " +
                         (islem).gelirGiderTuru!.stringValue!),
                 subtitle: Text(dateFormatterToString(islem.islemTarihi!)),
@@ -67,14 +74,17 @@ class CariTransPage extends StatelessWidget {
                     : null, */
                 onTap: () {
                   if (islem.runtimeType == CariIslemModel) {
-                   
-                      goToView(context,
-                          viewToGo: const CariTransactionAddView(),
-                          viewModel:
-                              CariTransactionAddViewModel.showExistHareket(
-                                  islem as CariIslemModel, viewModel.cariKart));
-                    
-                  } 
+                    goToView(context,
+                        viewToGo: const CariTransactionAddView(),
+                        viewModel: CariTransactionAddViewModel.showExistHareket(
+                            islem as CariIslemModel, viewModel.cariKart));
+                  } else if (islem.runtimeType == HesapHareketModel) {
+                    goToView(context,
+                        viewToGo: AccountTransactionAddView(),
+                        viewModel: AccountTransactionAddViewModel.showExist(
+                            islem as HesapHareketModel,
+                            cariKart: viewModel.cariKart));
+                  }
                 },
 
                 /*  Text((islem.toplamTutar ?? 0).toStringAsFixed(2)), */

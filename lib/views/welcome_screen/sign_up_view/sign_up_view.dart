@@ -1,13 +1,14 @@
 import 'package:cari_hesapp_lite/components/already_have_account_check.dart';
+import 'package:cari_hesapp_lite/components/my_logo.dart';
+import 'package:cari_hesapp_lite/components/snack_bar.dart/snack_bar.dart';
 import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:cari_hesapp_lite/enums/route_names.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/validator.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/welcome_screen/sign_up_view/sign_up_view_model.dart';
-import 'package:cari_hesapp_lite/views/welcome_screen/verify_view/verify_view.dart';
-import 'package:cari_hesapp_lite/views/welcome_screen/verify_view/verify_view_model.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:cari_hesapp_lite/views/welcome_screen/sign_up_view/sozlesme.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kartal/kartal.dart';
 import '../../../../components/buttons/rounded_button.dart';
 import '../../../../components/text_fields/rounded_text_field.dart';
@@ -45,8 +46,10 @@ class SignUpView extends StatelessWidget with Validator {
                 controller: viewModel.controllerTel,
                 label: "Tel(Opsiyonel)",
               ), */
-              SvgPicture.asset("assets/icons/handshake-svgrepo-com.svg",
-                  height: context.height * 0.2),
+              const MyLogoWidget(),
+                            const Text("Cari Hesapp", style: TextStyle(fontFamily: "Coiny",fontSize: 30)),
+
+
               MyRoundedTextField(
                 controller: viewModel.controllerEmail,
                 label: "Email",
@@ -94,7 +97,10 @@ class SignUpView extends StatelessWidget with Validator {
                           viewModel.isChecked = value ?? false;
                         }),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        bas("value");
+                        goToView(context, viewToGo: const SozlesmeView());
+                      },
                       child: Text(
                         "Kullanıcı Sözleşmesi",
                         style: context.textTheme.caption!
@@ -115,11 +121,18 @@ class SignUpView extends StatelessWidget with Validator {
                   : const SizedBox.shrink(),
               const Divider(),
               RoundedButton("KAYDOL", onPressed: () async {
-                if ((await viewModel.save()) == null) {
-                  bas("value");
-                  Navigator.popAndPushNamed(
-                      context, RouteNames.AuthWrapper.route);
-                }
+                viewModel.save().then((value) {
+                  {
+                    bas("value");
+                    bas(value);
+                    if (value == null) {
+                      Navigator.popAndPushNamed(
+                          context, RouteNames.Login.route);
+                    } else {
+                      showSnackBar(context: context, message: value);
+                    }
+                  }
+                });
               }),
               const AlreadyHaveAccountCheck(isLogin: false),
             ],

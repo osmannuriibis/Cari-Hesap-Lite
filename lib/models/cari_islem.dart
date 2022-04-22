@@ -14,6 +14,8 @@ class CariIslemModel implements Islemler {
 
   @override
   String? cariId;
+
+  @override
   String? cariUnvani;
 
   @override

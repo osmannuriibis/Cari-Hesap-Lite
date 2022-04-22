@@ -1,15 +1,15 @@
+import 'package:cari_hesapp_lite/utils/close_statusbar.dart';
 import 'package:cari_hesapp_lite/utils/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'theme/theme_data.dart';
 import 'utils/konum_service/konum_service.dart';
-import 'utils/print.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'enums/route_names.dart';
 import 'services/firebase/auth/service/auth_service.dart';
 import 'views/welcome_screen/auth_wrapper/auth_wrapper_view.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -19,7 +19,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   (await Firebase.initializeApp());
   KonumService();
-
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
 

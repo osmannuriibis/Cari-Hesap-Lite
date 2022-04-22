@@ -1,4 +1,5 @@
 import 'package:cari_hesapp_lite/utils/place_picker_package/lib/entities/localization_item.dart';
+import 'package:cari_hesapp_lite/utils/place_picker_package/lib/place_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'api_keys.dart';
@@ -18,7 +19,7 @@ PlacePicker showPlacePicker({String initialSearchWord = ""}) {
       unnamedLocation: "Belirtilmemiş yer",
     ),
     displayLocation: KonumService().lastLocation != null
-        ? KonumService().lastLocation.toLatLng
-        : null,
+        ? KonumService().lastLocation!.toLatLng
+        : const LatLng(39.9067608, 32.76280790000001),
   );
 }

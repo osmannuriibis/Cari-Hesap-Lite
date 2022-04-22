@@ -1,4 +1,4 @@
-import 'package:cari_hesapp_lite/constants/constants.dart';
+
 import 'package:flutter/material.dart';
 
 /* import 'package:flutter/material.dart';
@@ -290,7 +290,7 @@ class HomeDrawer extends StatelessWidget {
   final Widget drawerList;
   final Widget header;
 
-  HomeDrawer({required this.drawerList, required this.header});
+  const HomeDrawer({Key? key, required this.drawerList, required this.header}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     /*  Drawer(
@@ -307,7 +307,7 @@ class HomeDrawer extends StatelessWidget {
   }
 
   _buildDrawer() {
-    const String image = 'assets/images/user_default_avatar.png';
+  
     return /* ClipPath(
       /// ---------------------------
       /// Building Shape for drawer .
@@ -401,70 +401,4 @@ class HomeDrawer extends StatelessWidget {
   }
 }
 
-Widget _buildRow(IconData icon, String lable,
-    {bool showBadge = false, required VoidCallback onPressed}) {
-  TextStyle tStyle = const TextStyle(color: kPrimaryColor, fontSize: 16.0);
-  return GestureDetector(
-    onTap: onPressed,
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: kPrimaryColor,
-          ),
-          const SizedBox(width: 10.0),
-          Text(
-            lable,
-            style: tStyle,
-          ),
-          const Spacer(),
-          if (showBadge)
-            Material(
-              color: Colors.deepOrange,
-              elevation: 5.0,
-              shadowColor: Colors.red,
-              borderRadius: BorderRadius.circular(5.0),
-              child: Container(
-                width: 25,
-                height: 25,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.deepOrange,
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: const Text(
-                  "10+",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-        ],
-      ),
-    ),
-  );
-}
 
-class OvalRightBorderClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, 0);
-    path.lineTo(size.width - 40, 0);
-    path.quadraticBezierTo(
-        size.width, size.height / 4, size.width, size.height / 2);
-    path.quadraticBezierTo(size.width, size.height - (size.height / 4),
-        size.width - 40, size.height);
-    path.lineTo(0, size.height);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}

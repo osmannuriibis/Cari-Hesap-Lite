@@ -1,7 +1,7 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedService {
   SharedService._();
@@ -42,4 +42,4 @@ class SharedService {
   }
 
   String getKeyPath(String key) => (_userKey ?? "null") + "/" + key;
-}
+} */

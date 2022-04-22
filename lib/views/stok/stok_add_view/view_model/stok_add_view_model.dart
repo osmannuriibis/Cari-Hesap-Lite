@@ -1,7 +1,6 @@
-
+import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../services/firebase/database/utils/database_utils.dart';
-import '../../../../utils/print.dart';
 
 import '../../../../models/bilgiler/bilgiler.dart';
 import '../../../../models/kartlar/stok_kart.dart';
@@ -36,9 +35,7 @@ class StokAddViewModel extends ChangeNotifier {
 
   String uyariAltBasligi = "";
 
-
   bool _isStoklu = true;
-
 
   MapEntry<String, String>? selectedDepo;
 
@@ -48,7 +45,6 @@ class StokAddViewModel extends ChangeNotifier {
     _isStoklu = value;
     notifyListeners();
   }
-
 
   StokAddViewModel.addNewStok() {
     isNewAdding = true;
@@ -60,7 +56,7 @@ class StokAddViewModel extends ChangeNotifier {
     isNewAdding = false;
     stokId = stokKart.id!;
     controllerStokAdi.text = stokKart.adi ?? "";
-   isStoklu = stokKart.stokTipi ?? true;
+    isStoklu = stokKart.stokTipi ?? true;
     controllerKategori.text = stokKart.kategori ?? "";
     controllerBarkod.text = stokKart.barkod ?? "";
     controllerUrunKodu.text = stokKart.urunKodu ?? "";
@@ -70,12 +66,14 @@ class StokAddViewModel extends ChangeNotifier {
     controllerAlisFiyat.text = stokKart.alisFiyati.toString();
     controllerSatisFiyat.text = stokKart.satisFiyati.toString();
     controllerAlisFiyatiKdvli.text =
-        (((stokKart.alisFiyati ?? 0) * (stokKart.kdv ?? 0)) / 100).toString();
+        ((stokKart.alisFiyati ?? 0) * ((100 + (stokKart.kdv ?? 0)) / 100))
+            .toStringAsFixed(2);
     controllerSatisFiyatiKdvli.text =
-        (((stokKart.satisFiyati ?? 0) * (stokKart.kdv ?? 0)) / 100).toString();
+        ((stokKart.satisFiyati ?? 0) * ((100 + (stokKart.kdv ?? 0)) / 100))
+            .toStringAsFixed(2);
     controllerKarOrani.text =
-        ((stokKart.satisFiyati ?? 0) - (stokKart.alisFiyati ?? 0) - 1)
-            .toString(); //TODO ?????
+        (((stokKart.satisFiyati ?? 1) / (stokKart.alisFiyati ?? 1) * 100) - 100)
+            .toStringAsFixed(2);
     controllerAciklama.text = stokKart.aciklama.toString();
   }
 
@@ -103,7 +101,6 @@ class StokAddViewModel extends ChangeNotifier {
   }
 
   selectBirimFromList(MapEntry val) {
-
     controllerBirim.text = val.value.toString().toCapitalize();
   }
 
@@ -174,11 +171,9 @@ class StokAddViewModel extends ChangeNotifier {
         _modeliHazirla();
         await _modeliYaz();
 
-
         return null;
-      }on Exception catch (err) {
-       return  fetchCatch(err, this);
-        
+      } on Exception catch (err) {
+        return fetchCatch(err, this);
       }
     } else {
       uyariAltBasligi = "*Girilmesi gereken zorunlu alanlar!";
@@ -189,7 +184,6 @@ class StokAddViewModel extends ChangeNotifier {
 
   void _modeliHazirla() {
     stokKart = stokKart.copyWith(
-      
       aciklama: controllerAciklama.text.trim(),
       adi: controllerStokAdi.text.trim(),
       alisFiyati: alis,
@@ -205,14 +199,13 @@ class StokAddViewModel extends ChangeNotifier {
   }
 
   Future<String?> _modeliYaz() async {
-  
- return await dbutil.addOrSetModel(stokKart);
-
+    return await dbutil.addOrSetModel(stokKart);
   }
 
   Future<String?> fetchBarcode() {
     return scanBarcode().then<String?>((value) {
-      print(value);
+      bas("barcde result");
+      bas(value);
 
       if (num.tryParse(value) != -1) {
         controllerBarkod.text = value;
@@ -222,8 +215,4 @@ class StokAddViewModel extends ChangeNotifier {
       }
     });
   }
-
-
-
-
 }

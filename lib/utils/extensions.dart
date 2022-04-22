@@ -1,7 +1,7 @@
 import 'dart:math';
 
+import 'package:cari_hesapp_lite/components/snack_bar.dart/snack_bar.dart';
 import 'package:cari_hesapp_lite/utils/catch.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -121,14 +121,17 @@ extension FutureExtension<T> on Future<T?> {
 
 extension SaveExtension on Future<String?> {
   Future<T?> showSaveSnackBar<T>(BuildContext context,
-      {bool isPop = true,
+  
+      {
+        String messageInSucces ="İşlem Başarılı",
+        bool isPop = true,
       bool isPopOnError = false,
       SnackBarAction? action,
       T? model}) async {
     var result = await this;
 
-
     if (result == null) {
+      showSnackBar(context: context,message: messageInSucces);
       if (isPop) {
         Navigator.of(context).pop(model);
       }
@@ -142,5 +145,11 @@ extension SaveExtension on Future<String?> {
         Navigator.of(context).pop(model);
       }
     }
+    return null;
   }
+}
+
+extension BoolExtension on bool? {
+  bool get exactlyTrue => this ?? false;
+  bool get exactlyFalse => this ?? true;
 }

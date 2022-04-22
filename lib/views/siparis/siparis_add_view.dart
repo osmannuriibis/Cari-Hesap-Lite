@@ -1,5 +1,5 @@
 import 'package:cari_hesapp_lite/components/dialogs/custom_alert_dialog.dart';
-import 'package:cari_hesapp_lite/utils/dialogs/select_date_dialog.dart';
+import 'package:cari_hesapp_lite/utils/dialogs/dialogs.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/views/stok/stok_view/stok_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

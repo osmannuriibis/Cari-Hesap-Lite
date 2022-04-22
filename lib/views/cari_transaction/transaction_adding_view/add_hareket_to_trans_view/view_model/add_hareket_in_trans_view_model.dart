@@ -2,7 +2,6 @@ import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/kartlar/cari_kart.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 
 import '../../../../../models/fiyatlar.dart';
 import '../../../../../utils/catch.dart';
@@ -95,6 +94,7 @@ class AddHareketInTransViewModel extends ChangeNotifier {
         if (value.docs.isNotEmpty) {
           return value.docs.first.data();
         }
+        return null;
       });
 
       if (map != null) {
@@ -287,6 +287,7 @@ class AddHareketInTransViewModel extends ChangeNotifier {
           urunAdi: stokKart.adi,
           islemFiyati: birimFiyat,
           miktar: miktar,
+          birim: stokKart.birim,
           islemTarihi: cariIslem?.islemTarihi ?? stokHareket.islemTarihi,
           tutar: tutar,
           iskontoOrani: iskontoOran,
@@ -304,6 +305,7 @@ class AddHareketInTransViewModel extends ChangeNotifier {
     } else {
       return "validation err";
     }
+    return null;
   }
 
   void setControllers() {

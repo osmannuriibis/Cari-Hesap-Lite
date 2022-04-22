@@ -34,95 +34,98 @@ class AlertDialogWithFirebaseList extends StatelessWidget {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(10),
       title: title,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        //    direction: Axis.vertical,
-        children: [
-          const Text(
-            "Listeden seçebilir, yeni ekleyebilirsiniz",
-            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-          ),
-          MyCard(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 2),
-            child: MyFirestoreDocList(
-              key: key,
-              reverse: reverse,
-              streamQuery: query,
-              shrinkWrap: true,
-              itemBuilder: (context, snapshot) {
-                Map<String, dynamic>? map = snapshot?.data();
-                if (map == null) return const Text("Veri Yok");
-
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (var item in map.entries)
-                        TextButton(
-                          onPressed: () {
-                            onPressedItem!(item);
-                          },
-                          onLongPress: () {
-                            onLongPressItem!(item);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14.0, horizontal: 10),
-                            child: Text(
-                              item.key,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                fontSize: 18,
+      content: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          //    direction: Axis.vertical,
+          children: [
+            const Text(
+              "Listeden seçebilir, yeni ekleyebilirsiniz",
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            ),
+            MyCard(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 2),
+              child: MyFirestoreDocList(
+                key: key,
+                reverse: reverse,
+                streamQuery: query,
+                shrinkWrap: true,
+                itemBuilder: (context, snapshot) {
+                  Map<String, dynamic>? map = snapshot?.data();
+                  if (map == null) return const Text("Veri Yok");
+      
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (var item in map.entries)
+                          TextButton(
+                            onPressed: () {
+                              onPressedItem!(item);
+                            },
+                            onLongPress: () {
+                              onLongPressItem!(item);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 14.0, horizontal: 10),
+                              child: Text(
+                                item.key,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      const Divider(
-                        height: 0,
-                      )
-                    ],
-                  ),
-                );
-              },
-              //(context, snapshot, animation, index) =>
-              // shrinkWrap: true,
-            ),
-          ),
-          const Text(
-            "Satır Silmek için basılı tutunuz",
-            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Flexible(
-                  flex: 5,
-                  child: TextFormField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(" "),
-                    ],
-                    keyboardType: TextInputType.name,
-                    controller: controller,
-                    decoration: InputDecoration(
-                        hintText: hintText,
-                        hintStyle: const TextStyle(fontStyle: FontStyle.italic)),
-                  )),
-              Flexible(
-                flex: 3,
-                child: OutlinedButton(
-                  child: const Text("Ekle"),
-                  onPressed: onPressedActionButton,
-                ),
+                        const Divider(
+                          height: 0,
+                        )
+                      ],
+                    ),
+                  );
+                },
+                //(context, snapshot, animation, index) =>
+                // shrinkWrap: true,
               ),
-            ],
-          ),
-        ],
+            ),
+            const Text(
+              "Satır Silmek için basılı tutunuz",
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                    flex: 5,
+                    child: TextFormField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(" "),
+                      ],
+                      keyboardType: TextInputType.name,
+                      controller: controller,
+                      decoration: InputDecoration(
+                          hintText: hintText,
+                          hintStyle: const TextStyle(fontStyle: FontStyle.italic)),
+                    )),
+                Flexible(
+                  flex: 3,
+                  child: OutlinedButton(
+                    child: const Text("Ekle"),
+                    onPressed: onPressedActionButton,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

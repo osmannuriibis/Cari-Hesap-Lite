@@ -1,5 +1,4 @@
 import 'package:cari_hesapp_lite/components/text_fields/base_bordered_text_field.dart';
-import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,8 +29,8 @@ class RowTextFieldWithEndIcon extends StatelessWidget {
 
   final bool selectTextWithTap;
 
-  RowTextFieldWithEndIcon(
-      {this.labelText,
+  const RowTextFieldWithEndIcon(
+      {Key? key, this.labelText,
       this.controller,
       this.hintText,
       this.keyboardType,
@@ -44,7 +43,7 @@ class RowTextFieldWithEndIcon extends StatelessWidget {
       this.validator,
       this.selectTextWithTap = false,
       this.endIconColor = Colors.black54,
-      this.divider = false});
+      this.divider = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,14 +71,14 @@ class RowTextFieldWithEndIcon extends StatelessWidget {
             (endIcon != null)
                 ? IconButton(
                     padding:
-                        EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 20),
+                        const EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 20),
                     icon: endIcon!,
                     onPressed: endIconPressed,
                     color: endIconColor)
-                : SizedBox.shrink(),
+                : const SizedBox.shrink(),
           ],
         ),
-        endIcon != null ? Divider() : SizedBox.shrink()
+        endIcon != null ? const Divider() : const SizedBox.shrink()
       ],
     );
   }

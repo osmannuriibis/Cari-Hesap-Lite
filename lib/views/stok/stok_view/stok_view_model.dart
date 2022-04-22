@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cari_hesapp_lite/models/stok_hareket.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/kartlar/stok_kart.dart';
@@ -32,5 +31,9 @@ class StokViewModel extends ChangeNotifier {
 
   void init() {
     fetchMovement();
+  }
+
+  void deleteStok() {
+    dbUtil.deleteModel(stokKart);
   }
 }

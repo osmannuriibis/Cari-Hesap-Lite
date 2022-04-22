@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
+import '../../../../components/appbar/my_app_bar.dart';
 import '../place_picker.dart';
 import '../uuid.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,7 @@ import 'package:http/http.dart' as http;
 ///
 /// API key provided should have `Maps SDK for Android`, `Maps SDK for iOS`
 /// and `Places API`  enabled for it
+// ignore: must_be_immutable
 class PlacePicker extends StatefulWidget {
   /// API key generated from Google Cloud Console. You can get an API key
   /// [here](https://cloud.google.com/maps-platform/)
@@ -28,9 +30,11 @@ class PlacePicker extends StatefulWidget {
   LocalizationItem? localizationItem;
 
   PlacePicker(this.apiKey,
-      {Key? key, this.displayLocation,
+      {Key? key,
+      this.displayLocation,
       this.localizationItem,
-      this.initialSearchWord = ""}) : super(key: key) {
+      this.initialSearchWord = ""})
+      : super(key: key) {
     localizationItem ??= LocalizationItem();
   }
 
@@ -95,7 +99,7 @@ class PlacePickerState extends State<PlacePicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: MyAppBar(
         key: appBarKey,
         title: SearchInput(searchPlace,
             initialSearchWord: widget.initialSearchWord),
@@ -112,7 +116,7 @@ class PlacePickerState extends State<PlacePicker> {
               ),
               myLocationButtonEnabled: true,
               mapToolbarEnabled: true, //
-              
+
               myLocationEnabled: true,
               onMapCreated: onMapCreated,
               onLongPress: (latLng) {
@@ -140,8 +144,8 @@ class PlacePickerState extends State<PlacePicker> {
                       Padding(
                         child: Text(widget.localizationItem!.nearBy,
                             style: const TextStyle(fontSize: 16)),
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 8),
                       ),
                       Expanded(
                         child: ListView(
@@ -188,10 +192,10 @@ class PlacePickerState extends State<PlacePicker> {
     clearOverlay();
 
     setState(() {
-      hasSearchTerm = place.length > 0;
+      hasSearchTerm = place.isNotEmpty;
     });
 
-    if (place.length < 1) {
+    if (place.isEmpty) {
       return;
     }
 
@@ -240,7 +244,7 @@ class PlacePickerState extends State<PlacePicker> {
           "https://maps.googleapis.com/maps/api/place/autocomplete/json?"
           "key=${widget.apiKey}&"
           "language=${widget.localizationItem!.languageCode}&"
-          "input={$place}&sessiontoken=${sessionToken}";
+          "input={$place}&sessiontoken=$sessionToken";
 
       if (locationResult != null) {
         endpoint += "&location=${locationResult!.latLng!.latitude}," +
@@ -369,8 +373,8 @@ class PlacePickerState extends State<PlacePicker> {
     // markers.clear();
     setState(() {
       markers.clear();
-      markers.add(
-          Marker(markerId: const MarkerId("selected-location"), position: latLng));
+      markers.add(Marker(
+          markerId: const MarkerId("selected-location"), position: latLng));
     });
   }
 

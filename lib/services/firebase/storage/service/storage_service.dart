@@ -33,8 +33,10 @@ class StorageService with DBService {
   }
 }
 
-enum StorageFolder { users, sirketler }
+enum StorageFolder { users, sirketler,
+mesajlar
+ }
 
 extension ToName on Enum {
-  String get getName => toString().split('.').last;
+  String get getName => name;
 }

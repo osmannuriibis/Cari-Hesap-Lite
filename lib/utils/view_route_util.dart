@@ -19,7 +19,7 @@ Future<StokKart?> getStokKartByPop(BuildContext context) {
   return Navigator.push<StokKart>(
       context,
       MaterialPageRoute(
-        builder: (context) => StokListView(),
+        builder: (context) => const StokListView(),
       ));
 }
 

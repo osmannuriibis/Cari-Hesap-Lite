@@ -4,7 +4,6 @@ import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/islemler_model.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DetayRaporViewModel extends ChangeNotifier {
@@ -12,23 +11,33 @@ class DetayRaporViewModel extends ChangeNotifier {
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   List<Islemler> list;
-  DetayRaporViewModel(this.list) {}
+
+  List filterList;
+  DetayRaporViewModel(this.list,this.filterList);
 
   List<Islemler> getList() {
+    bas("list.length");
+    bas(list.length);
+
     var _list = list.where((element) {
       var islemDay = element.islemTarihi?.toDate();
+
       if (islemDay == null) return false;
-      if (islemDay.isAfter(selectedDay) &&
+      if (islemDay.isAfter(selectedDay.subtract(const Duration(seconds: 1))) &&
           islemDay.isBefore(selectedDay.add(const Duration(days: 1)))) {
         return true;
       }
       return false;
     }).toList();
+
+    _list = filter(_list);
+
     return _list;
   }
 
   num verTot = 0;
   String toplamVerilen() {
+    verTot = 0;
     for (var item in getList()) {
       if (item.runtimeType == CariIslemModel &&
           (item as CariIslemModel).islemTuru == CariIslemTuru.satis) {
@@ -43,7 +52,10 @@ class DetayRaporViewModel extends ChangeNotifier {
 
   num alTot = 0;
   String toplamAlinan() {
+    alTot = 0;
     for (var item in getList()) {
+      bas("for =>>>>>>");
+      bas(item);
       if (item.runtimeType == CariIslemModel &&
           (item as CariIslemModel).islemTuru == CariIslemTuru.alis) {
         alTot += item.toplamTutar ?? 0;
@@ -55,7 +67,7 @@ class DetayRaporViewModel extends ChangeNotifier {
     return alTot.toStringAsFixed(2) + "₺";
   }
 
-  num get farkTot => verTot - alTot;
+  num get farkTot => alTot - verTot;
   void previousDay() {
     selectedDay = selectedDay.subtract(const Duration(days: 1));
     notifyListeners();
@@ -64,5 +76,9 @@ class DetayRaporViewModel extends ChangeNotifier {
   void nextDay() {
     selectedDay = selectedDay.add(const Duration(days: 1));
     notifyListeners();
+  }
+
+  List<Islemler> filter(List<Islemler> list) {
+    return list;
   }
 }

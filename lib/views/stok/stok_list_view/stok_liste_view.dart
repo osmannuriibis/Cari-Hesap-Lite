@@ -106,7 +106,7 @@ class _ListTileItem extends StatelessWidget {
         ),
       ]),
       subtitle: Text(stokKart.aciklama ?? "asd"),
-      trailing: Icon(Icons.keyboard_arrow_right),
+      trailing: const Icon(Icons.keyboard_arrow_right),
       onTap: onTap,
     );
   }

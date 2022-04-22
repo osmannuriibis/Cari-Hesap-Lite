@@ -1,6 +1,7 @@
-
+import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../../../components/dialogs/show_alert_dialog.dart';
 import '../../../../../components/text_fields/price_text.dart';
 import '../../../../../constants/constants.dart';
 import '../../../../../models/kartlar/cari_kart.dart';
@@ -10,10 +11,13 @@ import '../../cari_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class CariHomePage extends StatelessWidget {
   late CariKart model;
 
-  int get telLength =>  (model.telNo?.length ?? 0); //TODO
+  CariHomePage({Key? key}) : super(key: key);
+
+  int get telLength => (model.telNo?.length ?? 0); //TODO
   List<Widget> telWidgetList = [];
   late CariViewModel viewModel;
   @override
@@ -43,7 +47,7 @@ class CariHomePage extends StatelessWidget {
             iconData: FontAwesomeIcons.mapMarkerAlt,
             textData: model.adres ?? "",
             onPressed: () {
-              viewModel.getDirection(); //TODO konum bilgisi false ise harita yönlendirmeyecek
+              viewModel.getDirection();
             },
           ),
           const Divider(),
@@ -53,7 +57,7 @@ class CariHomePage extends StatelessWidget {
                 horizontal: MediaQuery.of(context).size.width * 0.2), */
             child: const Text(
               "Düzenle",
-              style: TextStyle(color: Colors.black87, fontFamily: "Signika"),
+              style: TextStyle(color: Colors.black87),
             ),
             style: ElevatedButton.styleFrom(
               primary: kPrimaryColor,
@@ -70,6 +74,46 @@ class CariHomePage extends StatelessWidget {
                           child: CariAddView())));
             },
           ),
+          const Divider(height: 20),
+          ElevatedButton(
+            /* 
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.2), */
+            child: const Text(
+              "Sil",
+            ),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red,
+            ),
+            onPressed: () async {
+              if ((await showAlertDialog<bool?>(context,
+                      title: "UYARI",
+                      content: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                            "${viewModel.cariKart.cariTuru!.name.toCapitalize()} tamamen silicenek.\nDevam etmek istiyor musunuz?"),
+                      ),
+                      actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text(
+                          "Vazgeç",
+                          style: TextStyle(color: Colors.red),
+                        )),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text("Evet")),
+                  ]))
+                  .exactlyTrue) {
+                viewModel.deleteCariKart();
+                Navigator.pop(context);
+              }
+            },
+          ),
         ],
       ),
     );
@@ -77,7 +121,6 @@ class CariHomePage extends StatelessWidget {
 
   Widget _buildRow(BuildContext context,
       {required IconData iconData,
-     
       required String textData,
       required VoidCallback onPressed}) {
     return Card(
@@ -170,8 +213,8 @@ class _BakiyeCardState extends State<BakiyeCard> {
                       ),
                     ),
                     PText(
-                      "${(isBalanceVisible) ? ((viewModel.cariKart.bakiye ?? 0).toStringAsFixed(2)) : (hidenWord)}₺ ",
-                      fontSize: 20,
+                      "${(isBalanceVisible) ? ((viewModel.cariKart.bakiye ?? 0).toStringAsFixed(2) + "₺") : (hidenWord)} ",
+                      fontSize: 17,
                     )
                   ],
                 ),

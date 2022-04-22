@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 0.0.1+0
 
 environment:
   sdk: ">=2.16.1 <3.0.0"
@@ -35,28 +35,30 @@ dependencies:
   flutter_phoenix: ^1.0.0
   
   font_awesome_flutter: ^9.2.0
-  
-  freezed_annotation: any
+  google_fonts: ^2.3.1
+    
+  #freezed_annotation: any
 
-  flutter_svg: ^0.23.0+1
+  flutter_svg: ^1.0.3
 
   #sqflite: ^1.3.1+1
   shared_preferences:
-  http: ^0.13.4
-  path: ^1.8.0
-  path_provider:
+  #http: ^0.13.4
+  #path: ^1.8.0
+  #path_provider:
 
    
-  firebase_auth: ^ 3.2.0 
+  firebase_auth: ^3.3.14 
   
-  cloud_firestore: ^3.1.0
-  firebase_storage: ^10.2.4
-  firebase_core:
+  cloud_firestore: ^3.1.12
+  firebase_storage: any
+  firebase_core: ^1.14.1
 
   image_picker: ^0.8.4+4
   image_cropper: ^1.4.1
 
   url_launcher: ^6.0.18
+  open_mail_app: ^0.4.5
   
   flutter_localizations:
     sdk: flutter
@@ -74,7 +76,7 @@ dependencies:
   lottie: ^1.2.1
   
   #place_picker: ^0.9.18
-  location: ^4.3.0
+  location: any
   flutter_slidable: ^1.1.0 
 
   # The following adds the Cupertino Icons font to your application.
@@ -83,8 +85,8 @@ dependencies:
   # hive: 
   # hive_flutter:
 
-  fl_chart: ^0.35.0
-  charts_flutter: ^0.12.0
+  #fl_chart: ^0.35.0
+  #charts_flutter: ^0.12.0
   #syncfusion_flutter_charts: ^19.1.57+1
 
   #for CPIndicator
@@ -93,7 +95,7 @@ dependencies:
   #for slider page
   #transformer_page_view:
   #flutter_swiper: ^1.1.6
-  flutter_swiper_plus: ^2.0.4
+  #flutter_swiper_plus: ^2.0.4
 
   #https://pub.dev/packages/supercharged/install
   #TODO faydali bir paket daha sonra incele
@@ -101,19 +103,19 @@ dependencies:
 
   kartal: ^2.2.1
   
-  simple_animations: ^4.0.1
+  #simple_animations: ^4.0.1
 
-  curved_navigation_bar: ^1.0.1
+  #curved_navigation_bar: ^1.0.1
 
   #for credit card entry
   #https://pub.dev/packages/awesome_card
   #awesome_card: ^1.1.5
 
 
-  #flutter_barcode_scanner:
+  flutter_barcode_scanner: ^2.0.0
 
   #revenuecat ödeme yöntemi
-  purchases_flutter: ^3.0.0 
+  #purchases_flutter: ^3.0.0 
 
   #money_converter: ^0.0.4
 
@@ -122,7 +124,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  #cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -148,9 +150,11 @@ flutter:
   assets:
   - assets/images/
   - assets/images/user_default_avatar.png
-  
+  - assets/images/siniflandirma_ornek.png
   - assets/icons/
+  - assets/svg/
   - assets/lottie/
+  
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -187,12 +191,32 @@ flutter:
        - asset: fonts/Signika-Regular.ttf
        - asset: fonts/Signika-SemiBold.ttf
 
-       - style: normal
-
     - family: Quicksand
       fonts:
        - asset: fonts/Quicksand/Quicksand-Medium.ttf
-       - style: normal
+
+    - family: Coiny
+      fonts:
+       - asset: fonts/Coiny-Regular.ttf
+
+
+      
+      
+    - family: Comfortaa
+      fonts:
+       - asset: fonts/Comfortaa/Comfortaa-Bold.ttf
+       - asset: fonts/Comfortaa/Comfortaa-Light.ttf
+       - asset: fonts/Comfortaa/Comfortaa-Medium.ttf
+       - asset: fonts/Comfortaa/Comfortaa-Regular.ttf
+       - asset: fonts/Comfortaa/Comfortaa-SemiBold.ttf
+
+    - family: Jura
+      fonts:
+       - asset: fonts/Jura/Jura-Bold.ttf
+       - asset: fonts/Jura/Jura-Light.ttf
+       - asset: fonts/Jura/Jura-Medium.ttf
+       - asset: fonts/Jura/Jura-Regular.ttf
+       - asset: fonts/Jura/Jura-SemiBold.ttf
   # example:
   # fonts:
   #   - family: Schyler

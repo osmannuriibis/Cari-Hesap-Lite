@@ -19,7 +19,7 @@ class CariTransactionsListViewModel extends ChangeNotifier {
   } */
   var dbUtil = DBUtils();
 
-  Widget _hasSearchEntryIcon = Icon(Icons.clear);
+  Widget _hasSearchEntryIcon = const Icon(Icons.clear);
   set hasSearchEntryIcon(Widget widget) {
     _hasSearchEntryIcon = widget;
     notifyListeners();
@@ -43,13 +43,6 @@ class CariTransactionsListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isSwitch = true;
-  set isSwitch(bool value) {
-    _isSwitch = value;
-    notifyListeners();
-  }
-
-  bool get isSwitch => _isSwitch;
 
   CariTransactionsListViewModel() {
     getList();

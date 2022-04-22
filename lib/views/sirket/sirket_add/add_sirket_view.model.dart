@@ -1,8 +1,6 @@
 import 'package:cari_hesapp_lite/models/user_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../../models/sirket_model.dart';
 import '../../../services/firebase/database/service/database_service.dart';
@@ -85,7 +83,7 @@ class SirketAddViewModel extends ChangeNotifier {
         .collection(DBService().getClassColPath(SirketModel))
         .doc(generatedSirketId)
         .set({"id": generatedSirketId});
-/*     try {
+    try {
       DBUtils()
           .getModelReference<SirketModel>(generatedSirketId)
           .collection(DBService().getClassColPath(UserModel))
@@ -94,8 +92,8 @@ class SirketAddViewModel extends ChangeNotifier {
 
       return await DBUtils().addOrSetModel(_sirket);
     } on FirebaseException catch (e) {
-      // TODO
-    } */
+      return "Hata: $e";
+    }
   }
 
   basbas() {

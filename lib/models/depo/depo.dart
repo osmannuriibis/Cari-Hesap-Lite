@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../base_model/base_model.dart';
 
 class DepoModel extends BaseModel {
+  
   String? id;
   String? adi;
   String? adres;
@@ -37,6 +38,7 @@ class DepoModel extends BaseModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,

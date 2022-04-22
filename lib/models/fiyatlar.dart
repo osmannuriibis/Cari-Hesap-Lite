@@ -35,6 +35,7 @@ class Fiyatlar implements BaseModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'cariId': cariId,
@@ -90,10 +91,11 @@ class Fiyatlar implements BaseModel {
   // ignore: missing_return
   num? getIslemFiyatiByCariIslemTuru(CariIslemTuru cariIslemTuru) {
     if (cariIslemTuru == CariIslemTuru.satis) {
-      return this.satis;
+      return satis;
     } else if (cariIslemTuru == CariIslemTuru.alis) {
-      return this.alis;
+      return alis;
     }
+    return null;
   }
 
   @override

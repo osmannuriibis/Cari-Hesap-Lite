@@ -1,5 +1,3 @@
-import 'package:cari_hesapp_lite/components/scroll_column.dart';
-import 'package:flutter/gestures.dart';
 
 import '../../../components/buttons/fab.dart';
 import '../../../constants/constants.dart';
@@ -8,7 +6,6 @@ import 'cari_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'cari_view_pages/analyze/cari_analyze_page.dart';
 import 'cari_view_pages/home/cari_home_page.dart';
 import 'cari_view_pages/transactions/cari_transaction_page.dart';
 import 'components/end_drawer.dart';
@@ -40,8 +37,8 @@ class _CariViewState extends State<CariView> {
 
       case 1:
         return CariTransPage();
-      case 2:
-        return CariAnalyzePage();
+      /* case 2:
+        return CariAnalyzePage(); */
 
       default:
         return const Center(child: Text("Bir Hata Oluştu"));
@@ -80,7 +77,6 @@ class _CariViewState extends State<CariView> {
             openDrawer();
           },
         ),
-        
         endDrawer: CariViewEndDrawer(),
         /*    appBar: AppBar(
           flexibleSpace: FlexibleSpaceBar(
@@ -112,7 +108,7 @@ class _CariViewState extends State<CariView> {
                   //title: Text(widget.cariKart.unvani),
 
                   backgroundColor: kPrimaryColor,
-                  expandedHeight: MediaQuery.of(context).size.height * 0.20,
+                  expandedHeight: MediaQuery.of(context).size.height * 0.32,
                   floating: true,
                   excludeHeaderSemantics: true,
 
@@ -166,8 +162,8 @@ class _CariViewState extends State<CariView> {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Ofis"),
         BottomNavigationBarItem(icon: Icon(Icons.list), label: "İşlemler"),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.insert_chart_outlined), label: "Analiz"),
+        /* BottomNavigationBarItem(
+            icon: Icon(Icons.insert_chart_outlined), label: "Analiz"), */
       ],
     );
   }

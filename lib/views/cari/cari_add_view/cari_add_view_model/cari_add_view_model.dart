@@ -6,12 +6,10 @@ import '../../../../enums/cari_turu.dart';
 import '../../../../models/bilgiler/bilgiler.dart';
 import '../../../../models/kartlar/cari_kart.dart';
 import '../../../../models/konum.dart';
-import '../../../../services/firebase/database/service/database_service.dart';
 import '../../../../services/firebase/database/utils/database_utils.dart';
 import '../../../../utils/extensions.dart';
 import '../../../../utils/konum_service/konum_service.dart';
-import '../../../../utils/place_picker_package/lib/entities/entities.dart';
-import '../../../../utils/print.dart';
+import 'package:cari_hesapp_lite/utils/place_picker_package/lib/entities/entities.dart';
 
 class CariAddViewModel extends ChangeNotifier {
   // ignore: unused_field
@@ -306,6 +304,7 @@ class CariAddViewModel extends ChangeNotifier {
     } on Exception catch (e) {
       return fetchCatch(e, this);
     }
+    return null;
   }
 
   Future<String?> modeliYaz() async {

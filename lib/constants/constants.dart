@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
+
+String? get kVersion =>  DeviceUtility.instance.packageInfo?.version;
 
 const kPrimaryColor = Color(0xFFFFA444); //(0xFF6F35A5);
 const kPrimaryLightColor = Color(0xFFFFE0B2);

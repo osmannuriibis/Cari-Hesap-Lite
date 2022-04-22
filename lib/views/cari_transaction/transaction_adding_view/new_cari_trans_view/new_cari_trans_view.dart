@@ -4,7 +4,7 @@ import 'package:cari_hesapp_lite/components/dialogs/show_alert_dialog.dart';
 import 'package:cari_hesapp_lite/components/text_fields/my_text.dart';
 import 'package:cari_hesapp_lite/constants/cari_siniflandirma.dart';
 import 'package:cari_hesapp_lite/enums/cari_islem_turu.dart';
-import 'package:cari_hesapp_lite/models/kartlar/stok_kart.dart';
+import 'package:cari_hesapp_lite/enums/para_birimi.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/utils/extensions.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
@@ -52,19 +52,6 @@ class CariTransactionAddView extends StatelessWidget {
                   absorbing: !viewModel.isAllowedToAdjust,
                   child: _Body(viewModel)),
               _buildSaveButton(context, viewModel, viewModelUnlistened),
-              TextButton(
-                child: const Text("dene"),
-                onPressed: () {
-                  goToView(context,
-                      viewToGo: AddHareketInTransView(),
-                      viewModel: AddHareketInTransViewModel.newAdding(
-                          cariIslem: viewModel.cariIslem,
-                          stokKart: StokKart(
-                            id: "asd",
-                          ),
-                          cariKart: viewModel.cariKart));
-                },
-              ),
             ],
           ))),
     );
@@ -118,8 +105,8 @@ class CariTransactionAddView extends StatelessWidget {
               ),
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.red),
-                  textStyle:
-                      MaterialStateProperty.all(TextStyle(color: Colors.white)),
+                  textStyle: MaterialStateProperty.all(
+                      const TextStyle(color: Colors.white)),
                   shape: MaterialStateProperty.all(
                     const StadiumBorder(),
                   )),
@@ -181,13 +168,12 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     this.context = context;
-    CariTransactionAddViewModel viewModel =
-        Provider.of<CariTransactionAddViewModel>(context);
+
     CariTransactionAddViewModel viewModelUnlistened =
         Provider.of<CariTransactionAddViewModel>(context, listen: false);
 
     return Consumer<CariTransactionAddViewModel>(
-      builder: (context, viewModel, child) => Container(
+      builder: (context, viewModel, child) => SizedBox(
         width: double.maxFinite,
         child: Form(
           onChanged: () {},
@@ -310,7 +296,7 @@ class _Body extends StatelessWidget {
 
   Widget _buildEvrakFields(BuildContext context) {
     return AnimatedSize(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 200),
       child: _viewModel.isEvrakFieldOpen
           ? Card(
               child: Form(
@@ -449,7 +435,7 @@ class _Body extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(model != null ? model.unvani! : "Hata oluştu..."),
+                Text(model.unvani ?? ""),
                 const SizedBox(width: 5),
                 CircleAvatar(
                   minRadius: 10,
@@ -591,39 +577,13 @@ class _Body extends StatelessWidget {
   }
 
   Widget _buildStokHareketList(BuildContext context) {
-    return /* ListView.builder(
-    shrinkWrap: true,
-    itemCount: list.length,
-    itemBuilder: (context, index) {
-      StokHareket stokHareket = list[index];
-      bas("animated liste içi");
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _ItemForStokHareket(
-            urunAdi: (index + 1).toString() + ") " + stokHareket.urunAdi ?? "",
-            kdv: (_viewModel.getEvrakTuruString() !=
-                    IrsaliyeTuru.makbuz.stringValue)
-                ? stokHareket.kdvTutar.toStringAsFixed(2) ?? ""
-                : "0",
-            miktar: stokHareket.miktar.toString() ?? "",
-            tutar: (_viewModel.getEvrakTuruString() !=
-                    IrsaliyeTuru.makbuz.stringValue)
-                ? stokHareket.toplamTutar.toStringAsFixed(2) ?? ""
-                : stokHareket.netTutar.toStringAsFixed(2),
-          ),
-          Divider(),
-        ],
-      );
-    },
-  );
- */
-        Consumer<CariTransactionAddViewModel>(
-            builder: (context, _viewModel, child) {
+    return Consumer<CariTransactionAddViewModel>(
+        builder: (context, _viewModel, child) {
       return _CardForStokHareket(
         child: AnimatedSize(
           duration: const Duration(milliseconds: 400),
-          child: ListView.builder(
+          child: ListView.separated(
+            separatorBuilder: (context, index) => const Divider(height: 5),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _viewModel.hareketListesiSonHali.length,
@@ -671,23 +631,28 @@ class _Body extends StatelessWidget {
                       })
                 ]),
                 child: _ItemForStokHareket(
-                  onTap: () {
-                  },
+                  onTap: () {},
                   onLongPress: () {
                     _viewModel.removeItem(index);
                   },
                   urunAdi: (index + 1).toString() +
                       ") " +
                       (stokHareket.urunAdi ?? ""),
-                  kdv: (_viewModel.evrakTuru.value !=
-                          IrsaliyeTuru.makbuz.stringValue)
-                      ? stokHareket.kdvTutar?.toStringAsFixed(2) ?? ""
-                      : "0",
-                  miktar: stokHareket.miktar?.toString() ?? "",
+                  kdv: ((_viewModel.evrakTuru.value !=
+                              IrsaliyeTuru.makbuz.stringValue)
+                          ? stokHareket.kdvTutar?.toStringAsFixed(2) ?? ""
+                          : "0") +
+                      stokHareket.paraBirimi.getSembol,
+                  miktar: (stokHareket.miktar?.toString() ?? "0") +
+                      (stokHareket.birim ?? ""),
+                  fiyat: (stokHareket.islemFiyati ?? 0).toStringAsFixed(2) +
+                      "${stokHareket.paraBirimi.getSembol}/${stokHareket.birim}",
                   tutar: (_viewModel.evrakTuru.value !=
                           IrsaliyeTuru.makbuz.stringValue)
-                      ? stokHareket.toplamTutar?.toStringAsFixed(2) ?? ""
-                      : stokHareket.netTutar?.toStringAsFixed(2) ?? "",
+                      ? (stokHareket.toplamTutar ?? 0).toStringAsFixed(2) +
+                          stokHareket.paraBirimi.getSembol
+                      : (stokHareket.netTutar ?? 0).toStringAsFixed(2) +
+                          stokHareket.paraBirimi.getSembol,
                 ),
               );
             },
@@ -734,7 +699,7 @@ class _ListItemTitle extends StatelessWidget {
 }
 
 class _ItemForStokHareket extends StatelessWidget {
-  final String urunAdi, miktar, kdv, tutar;
+  final String urunAdi, miktar, kdv, tutar, fiyat;
 
   final VoidCallback? onLongPress, onTap;
   const _ItemForStokHareket({
@@ -745,6 +710,7 @@ class _ItemForStokHareket extends StatelessWidget {
     this.tutar = "Tutar",
     this.onLongPress,
     this.onTap,
+    this.fiyat = "Fiyat",
   }) : super(key: key);
 
   @override
@@ -753,32 +719,39 @@ class _ItemForStokHareket extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongPress,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Container(
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                // direction: Axis.vertical,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    flex: 6,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        urunAdi,
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      urunAdi,
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w800),
                     ),
                   ),
-                  Flexible(flex: 5, child: Center(child: Text(miktar))),
-                  Flexible(flex: 5, child: Center(child: Text(kdv))),
-                  Flexible(
-                      flex: 3,
-                      child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(tutar))),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 0, top: 10),
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Flexible(flex: 4, child: Center(child: Text(miktar))),
+                        Flexible(flex: 4, child: Center(child: Text(fiyat))),
+                        Flexible(flex: 4, child: Center(child: Text(kdv))),
+                        Flexible(
+                            flex: 4,
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Text(tutar))),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],

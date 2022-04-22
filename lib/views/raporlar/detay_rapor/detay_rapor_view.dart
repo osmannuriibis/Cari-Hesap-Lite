@@ -1,14 +1,13 @@
-import 'package:cari_hesapp_lite/constants/constants.dart';
+// ignore_for_file: must_be_immutable
+
 import 'package:cari_hesapp_lite/enums/gelir_gider_turu.dart';
 import 'package:cari_hesapp_lite/enums/para_birimi.dart';
 import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/islemler_model.dart';
 import 'package:cari_hesapp_lite/utils/date_format.dart';
-import 'package:cari_hesapp_lite/utils/extensions.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
+import 'package:cari_hesapp_lite/utils/dialogs/dialogs.dart';
 import 'package:cari_hesapp_lite/views/raporlar/detay_rapor/detay_rapor_view_model.dart';
-import 'package:cari_hesapp_lite/views/stok/stok_add_view/stok_add_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kartal/kartal.dart';
@@ -20,6 +19,8 @@ import '../../../enums/cari_islem_turu.dart';
 
 class DetayRaporView extends StatelessWidget {
   late DetayRaporViewModel viewModel;
+
+  DetayRaporView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     viewModel = Provider.of<DetayRaporViewModel>(context);
@@ -39,9 +40,19 @@ class DetayRaporView extends StatelessWidget {
                 icon: const Icon(FontAwesomeIcons.chevronLeft),
               ),
             ),
-            Text(
-              dateTimeFormatterToString(viewModel.selectedDay),
-              style: context.textTheme.subtitle1,
+            GestureDetector(
+              onTap: () async {
+                var day = await showDateDialog(context,
+                    initialDate: viewModel.selectedDay);
+                if (day != null) {
+                  viewModel.selectedDay = day;
+                  viewModel.notifyListeners();
+                }
+              },
+              child: Text(
+                dateTimeFormatterToString(viewModel.selectedDay),
+                style: context.textTheme.subtitle1,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -58,7 +69,7 @@ class DetayRaporView extends StatelessWidget {
             ),
           ],
         ),
-        const Divider(),
+      
         /*     Container(
           margin: const EdgeInsets.all(8),
           padding: const EdgeInsets.all(8),
@@ -117,7 +128,6 @@ class _RowCustom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

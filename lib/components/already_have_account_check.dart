@@ -1,5 +1,4 @@
 import 'package:cari_hesapp_lite/enums/route_names.dart';
-import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/welcome_screen/sign_up_view/sign_up_view.dart';
 import 'package:cari_hesapp_lite/views/welcome_screen/sign_up_view/sign_up_view_model.dart';
 import 'package:provider/provider.dart';

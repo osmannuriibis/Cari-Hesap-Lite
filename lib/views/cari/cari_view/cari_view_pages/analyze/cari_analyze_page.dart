@@ -1,4 +1,4 @@
-
+/* 
 import 'package:cari_hesapp_lite/views/cari/cari_view/cari_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -51,3 +51,4 @@ return Center(child: Text("Veri Yok"));
         }) */;
   }
 }
+ */

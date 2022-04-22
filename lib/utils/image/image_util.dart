@@ -7,8 +7,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageUtil {
-  Future<File?> cropImage(File image) async {
-    File? croppedFile = await ImageCropper() .cropImage(
+  Future<File?> cropImage(File image,{CropStyle cropStyle = CropStyle.circle}) async {
+    File? croppedFile = await ImageCropper().cropImage(
         sourcePath: image.path,
         aspectRatioPresets: Platform.isAndroid
             ? [
@@ -28,7 +28,7 @@ class ImageUtil {
                 CropAspectRatioPreset.ratio7x5,
                 CropAspectRatioPreset.ratio16x9
               ],
-        cropStyle: CropStyle.circle,
+        cropStyle: cropStyle,
         androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Kırp',
             toolbarColor: kPrimaryColor,
@@ -46,7 +46,7 @@ class ImageUtil {
   }
 
   Future<File?> getImage(BuildContext context,
-      {bool thenCropImage = true}) async {
+      {bool thenCropImage = true,CropStyle cropStyle = CropStyle.circle }) async {
     ImageSource? isCamera = (await showDialog(
       context: context,
       builder: (context) => CustomAlertDialog(
@@ -56,7 +56,7 @@ class ImageUtil {
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
               title: const Text("Fotoğraf çek"),
-              onTap: () => Navigator.pop(context, ImageSource.camera),
+              onTap: () {return  Navigator.pop(context, ImageSource.camera)}
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
@@ -73,11 +73,12 @@ class ImageUtil {
 
       if (pickedFile != null) {
         if (thenCropImage) {
-          return cropImage(File(pickedFile.path));
+          return cropImage(File(pickedFile.path),cropStyle: cropStyle);
         } else {
           return File(pickedFile.path);
         }
       }
     }
+    return null;
   }
 }

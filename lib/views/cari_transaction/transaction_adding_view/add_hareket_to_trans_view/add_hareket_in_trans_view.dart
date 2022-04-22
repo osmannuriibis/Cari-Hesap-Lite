@@ -1,15 +1,11 @@
 import 'package:cari_hesapp_lite/components/appbar/my_app_bar.dart';
 import 'package:cari_hesapp_lite/components/scroll_column.dart';
 import 'package:cari_hesapp_lite/components/text_fields/my_field_with_label.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cari_hesapp_lite/components/cp_indicators/cp_indicator.dart';
-import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 
 import '../../../../components/buttons/base_primary_button.dart';
 import '../../../../components/text_fields/base_form_field.dart';
 import '../../../../constants/constants.dart';
-import '../../../../utils/num_input_formatter.dart';
 import '../../../../utils/general.dart';
 import '../../../../utils/validator.dart';
 import 'view_model/add_hareket_in_trans_view_model.dart';
@@ -21,6 +17,8 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class AddHareketInTransView extends StatelessWidget with Validator {
   late AddHareketInTransViewModel _viewModel;
+
+  AddHareketInTransView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +227,7 @@ class _EachRowBirimFiyat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int i = 0;
+    
     return FutureBuilder<num>(
         future: _viewModelUnlistened.getBirimFiyatInitialText(),
         builder: (context, snapshot) {
@@ -269,7 +267,7 @@ class _EachRowOnlyKdv extends StatelessWidget {
   final TextInputFormatter? inputFormatters;
   final String? suffixText;
 
-  _EachRowOnlyKdv({
+  const _EachRowOnlyKdv({
     Key? key,
     required this.textLabel,
     this.hintText,
@@ -290,7 +288,7 @@ class _EachRowOnlyKdv extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 28.0),
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Column(
         children: [
           Flex(
@@ -298,7 +296,7 @@ class _EachRowOnlyKdv extends StatelessWidget {
             direction: Axis.horizontal,
             children: [
               Flexible(
-                flex: 30,
+                flex: 10,
                 child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -310,8 +308,8 @@ class _EachRowOnlyKdv extends StatelessWidget {
                 ),
               ),
               Flexible(
-                flex: 65,
-                child: Container(
+                flex: 20,
+                child: SizedBox(
                   width: width(context) / 2,
                   child: BaseFormField(
                     inputFormatters: [
@@ -347,7 +345,3 @@ class _EachRowOnlyKdv extends StatelessWidget {
   }
 }
 
-sayfayiKapat(BuildContext context) {
-  print("object");
-  return Navigator.pop(context);
-}

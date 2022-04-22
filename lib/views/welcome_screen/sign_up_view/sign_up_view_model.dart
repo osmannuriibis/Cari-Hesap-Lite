@@ -1,11 +1,8 @@
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
+import 'package:cari_hesapp_lite/utils/firebase_auth_exceptins.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../../models/user_model.dart';
-import '../../../services/firebase/database/utils/database_utils.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   var auth = AuthService();
@@ -22,6 +19,7 @@ class SignUpViewModel extends ChangeNotifier {
     _isVisiblePass1 = val;
     notifyListeners();
   }
+
   bool get isVisiblePass1 => _isVisiblePass1;
 
   bool _isVisiblePass2 = false;
@@ -29,6 +27,7 @@ class SignUpViewModel extends ChangeNotifier {
     _isVisiblePass2 = val;
     notifyListeners();
   }
+
   bool get isVisiblePass2 => _isVisiblePass2;
 
   bool get isChecked => _isChecked;
@@ -68,19 +67,23 @@ class SignUpViewModel extends ChangeNotifier {
   var controllerPassword2 = TextEditingController();
 
   Future<String?> save() async {
-    UserCredential? res;
-    if (formKey.currentState!.validate() && isChecked) {
-      warningCheck = null;
-      res = await auth.createUserWEAP(
-          email: controllerEmail.text.trim(),
-          password: controllerPassword.text);
-      return res != null ? null : "Birşeyler Ters Gitti";
+    formKey.currentState!.validate();
+    warningCheck = warningPass1 = warningPass2 = null;
+
+    if (!isChecked) return warningCheck = "Sözleşme kabul edilmeli";
+
+    if (formKey.currentState!.validate()) {
+      return await auth
+          .createUserWEAP(
+              email: controllerEmail.text.trim(),
+              password: controllerPassword.text)
+          .then<String?>((value) => null)
+          .onError((FirebaseAuthException error, stackTrace) {
+        return getAuthExceptionMessage(error.code);
+      });
+    } else {
+      return "Birşeyler ters gitti";
     }
-    bas(isChecked);
-    if (!isChecked) {
-      return (warningCheck = "*Sözleşme kabul edilmeli");
-    }
-    return null;
   }
 
   void onChangePass2(String value) {
@@ -92,8 +95,16 @@ class SignUpViewModel extends ChangeNotifier {
   bool isPassDifferent() =>
       (controllerPassword.text != controllerPassword2.text) ? true : false;
 
-  String? validatorPass(String? p1) =>
-      (controllerPassword.text != controllerPassword2.text)
-          ? "Şifreler Farklı"
-          : null;
+  String? validatorPass(String? p1) {
+    bas("validator pass");
+
+    bas(p1);
+    bas(controllerPassword.text != controllerPassword2.text);
+
+    return !(controllerPassword.text == controllerPassword2.text)
+        ? "Şifreler Farklı"
+        : null;
+  }
+
+  create() async {}
 }

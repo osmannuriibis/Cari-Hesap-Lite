@@ -1,5 +1,5 @@
 
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+/* import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:flutter/material.dart';
 class MyCurvedBotNavBar extends StatefulWidget {
@@ -45,4 +45,4 @@ class _MyCurvedBotNavBarState extends State<MyCurvedBotNavBar> {
       onTap: widget.onPageSelected,
     );
   }
-}
+} */

@@ -7,7 +7,8 @@ import 'package:cari_hesapp_lite/utils/konum_service/konum_extension.dart';
 import 'package:cari_hesapp_lite/utils/konum_service/konum_service.dart';
 import 'package:flutter/material.dart';
 
-class MyFirestoreList2<T> extends StatelessWidget {
+// ignore: must_be_immutable
+class MyFirestoreList23<T> extends StatelessWidget {
   late Type type;
 
   final Future<List<T>>? future;
@@ -26,7 +27,7 @@ class MyFirestoreList2<T> extends StatelessWidget {
 
   final bool isTitleAlways;
 
-  MyFirestoreList2(
+  MyFirestoreList23(
       {Key? key,
       this.physics = const NeverScrollableScrollPhysics(),
       this.future,
@@ -88,8 +89,7 @@ class MyFirestoreColList extends StatelessWidget {
 
   final bool reverse, shrinkWrap;
   final Widget defaultChild;
-  @override
-  final Key? key;
+  
   final Type T;
 
   final EdgeInsets padding;
@@ -102,7 +102,7 @@ class MyFirestoreColList extends StatelessWidget {
 
   const MyFirestoreColList({
     this.T = Stream,
-    this.key,
+    Key? key,
     required this.query,
     required this.itemBuilder,
     this.reverse = false,
@@ -153,8 +153,10 @@ class MyFirestoreColList extends StatelessWidget {
       if (sortingType != null) {
         if (sortingType == "konum") {
           var currentLocation = KonumService().currentPosition;
+
           list.map((e) => e.data());
-          list.sort((e, y) {
+          if(currentLocation != null) {
+            list.sort((e, y) {
             var first = getDistance(
                 currentLocation.asKonum,
                 Konum(
@@ -169,6 +171,7 @@ class MyFirestoreColList extends StatelessWidget {
           
             return first.compareTo(second);
           });
+          }
         
           list.map((e) => e.data());
         }
@@ -203,8 +206,7 @@ class MyFirestoreColList extends StatelessWidget {
         shrinkWrap: shrinkWrap,
         reverse: reverse,
         itemBuilder: (context, index) {
-          //TODO       AnimatedBuilder(animation: animation, builder: builder);
-          //
+        
 
           return itemBuilder(context, list[index], index);
         },
@@ -229,11 +231,10 @@ class MyFirestoreDocList extends StatelessWidget {
 
   final bool reverse, shrinkWrap;
   final Widget defaultChild;
-  @override
-  final Key? key;
 
-  MyFirestoreDocList(
-      {this.key,
+
+  const MyFirestoreDocList(
+      {Key? key,  
       this.streamQuery,
       this.itemBuilder,
       this.reverse = false,
@@ -241,8 +242,8 @@ class MyFirestoreDocList extends StatelessWidget {
       this.defaultChild = const CPIndicator(),
       this.futureQuery})
       : assert(futureQuery == null || streamQuery == null),
-        assert(!(futureQuery == null && streamQuery == null)),
-        super(key: key);
+        assert(!(futureQuery == null && streamQuery == null)), super(key: key)
+        ;
 
   @override
   Widget build(BuildContext context) {
@@ -268,8 +269,7 @@ class MyFirestoreDocList extends StatelessWidget {
   Widget builder(BuildContext context,
       AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     if (snapshot.connectionState == ConnectionState.active) {
-      //TODO       AnimatedBuilder(animation: animation, builder: builder);
-      //
+    
 
       return itemBuilder!(context, snapshot.data);
     } else {

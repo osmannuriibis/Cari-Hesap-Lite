@@ -5,7 +5,6 @@ import 'package:cari_hesapp_lite/components/snack_bar.dart/snack_bar.dart';
 import 'package:cari_hesapp_lite/components/text_fields/base_form_field.dart';
 import 'package:cari_hesapp_lite/services/firebase/auth/service/auth_service.dart';
 import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:charts_flutter/flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';

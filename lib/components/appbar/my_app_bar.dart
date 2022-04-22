@@ -42,11 +42,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               centerTitle: centerTitle,
               toolbarHeight: toolbarHeight,
               backgroundColor: Colors.amber[50],
-              iconTheme: Theme.of(context)
-                  .iconTheme
-                  .copyWith(color: Colors.amber[900]),
+              iconTheme:
+                  Theme.of(context).iconTheme.copyWith(color: kAccentColor),
               titleTextStyle: const TextStyle(
-                color: kPrimaryColor,
+                color: kAccentColor,
               ) /* Theme.of(context)
                   .textTheme
                   .headline6
@@ -61,7 +60,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: Theme.of(context)
                           .textTheme
                           .headline6!
-                          .copyWith(color: Colors.amber[900], fontSize: 17),
+                          .copyWith(color: kAccentColor, fontSize: 17),
                     )
                   : title,
               bottom: bottom,

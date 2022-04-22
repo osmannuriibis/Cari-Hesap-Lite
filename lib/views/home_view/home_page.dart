@@ -10,7 +10,10 @@ import 'package:cari_hesapp_lite/models/cari_islem.dart';
 import 'package:cari_hesapp_lite/models/hesap_hareket.dart';
 import 'package:cari_hesapp_lite/models/siparis_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
+import 'package:cari_hesapp_lite/utils/close_statusbar.dart';
 import 'package:cari_hesapp_lite/utils/date_format.dart';
+import 'package:cari_hesapp_lite/utils/dialogs/dialogs.dart';
+import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view.dart';
 import 'package:cari_hesapp_lite/views/cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view_model.dart';
@@ -18,22 +21,25 @@ import 'package:cari_hesapp_lite/views/home_view/components/drawer/home_driwer_l
 import 'package:cari_hesapp_lite/views/home_view/home_view_model.dart';
 import 'package:cari_hesapp_lite/views/siparis/siparis_add_view.dart';
 import 'package:cari_hesapp_lite/views/siparis/siparis_add_view_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/constants.dart';
-import '../../services/firebase/auth/service/auth_service.dart';
 import '../../utils/user_provider.dart';
 import 'components/drawer/drawer_header.dart';
 import 'components/drawer/home_drawer.dart';
 
+// ignore: must_be_immutable
 class HomeView extends StatelessWidget {
   var controller = TextEditingController();
   late HomeViewModel viewModel;
   late HomeViewModel viewModelUnlistened;
 
   bool isCari = true;
+
+  HomeView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
@@ -41,7 +47,6 @@ class HomeView extends StatelessWidget {
     viewModel = Provider.of<HomeViewModel>(context);
     viewModelUnlistened = Provider.of<HomeViewModel>(context, listen: false);
 
-    var myPanelList = viewModel.myPanels;
     var listSiparis = viewModel.listSiparis;
     var listTransactions = viewModel.listTransaction;
     var listIncome = viewModel.listIncome;
@@ -56,46 +61,69 @@ class HomeView extends StatelessWidget {
       bas(error);
     }).whenComplete(() => bas("when complete")); */
 
-    return Container(
-      color: kPrimaryLightColor, //Theme.of(context).colorScheme.primaryVariant,
+    return WillPopScope(
+      onWillPop: () async {
+        bas("viewModel.isDrawerOpen");
+        bas(viewModel.isDrawerOpen);
+        if (viewModel.isDrawerOpen) return true;
 
-      child: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          // resizeToAvoidBottomInset: false,
-          extendBodyBehindAppBar: false,
-          extendBody: false,
-          appBar: MyAppBar(
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: IconButton(
-                  icon: const Icon(Icons.power_settings_new),
-                  onPressed: () async {
-                    var val = await _buildSignOutDialog(context);
-                    if (val != null) {
-                      if (val) context.read<AuthService>().signOut();
-                    }
-                  },
+        return await showAlertDialog<bool>(context,
+                title: "Cari Hesapp Lite",
+                content: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Uygulama kapanacak.\nEmin misiniz?",
+                    style: context.textTheme.bodyLarge,
+                  ),
                 ),
-              ),
-            ],
-            titleText: userProvider.sirketModel?.unvani ?? "___",
-          ),
-          body: MyColumn(
-            children: [
-              _ordersArea(context, listSiparis),
-              const Divider(),
-              transactionArea(context, listTransactions),
-              const Divider(),
-              incomingArea(context, listTransactions, listIncome),
-            ],
-          ),
-          drawerEdgeDragWidth: width(context) / 2,
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      },
+                      child: const Text(
+                        "Vazgeç",
+                        style: TextStyle(color: Colors.red),
+                      )),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                      child: const Text("Evet")),
+                ]) ??
+            false;
+      },
+      child: Container(
+        color:
+            kPrimaryLightColor, //Theme.of(context).colorScheme.primaryVariant,
 
-          drawer: HomeDrawer(
-            drawerList: const HomeDrawerList(),
-            header: Header(),
+        child: SafeArea(
+          child: Scaffold(
+            onDrawerChanged: (isOpened) => viewModel.isDrawerOpen = isOpened,
+            resizeToAvoidBottomInset: false,
+            // resizeToAvoidBottomInset: false,
+
+            extendBodyBehindAppBar: false,
+            extendBody: false,
+            appBar: MyAppBar(
+              titleText: userProvider.sirketModel?.unvani ?? "___",
+            ),
+            body: MyColumn(
+              children: [
+                _ordersArea(context, listSiparis),
+                const Divider(),
+                transactionArea(context, listTransactions),
+                const Divider(),
+                incomingReportArea(context, listTransactions, listIncome),
+                const SizedBox(height: 25)
+              ],
+            ),
+            drawerEdgeDragWidth: width(context) / 2,
+
+            drawer: HomeDrawer(
+              drawerList: const HomeDrawerList(),
+              header: Header(),
+            ),
           ),
         ),
       ),
@@ -104,7 +132,7 @@ class HomeView extends StatelessWidget {
 
   MyCard _ordersArea(BuildContext context, List<SiparisModel> listSiparis) {
     listSiparis.sort((e, y) => e.siparisTarihi!.compareTo(y.siparisTarihi!));
-    
+
     return MyCard(
         margin: const EdgeInsets.only(top: 18),
         title: const Text("Siparisler"),
@@ -158,27 +186,6 @@ class HomeView extends StatelessWidget {
         ));
   }
 
-  Future<bool?> _buildSignOutDialog(BuildContext context) async {
-    return await showAlertDialog<bool>(context,
-        title: "Çıkış yapıyorsunuz",
-        content: const Text("Devam etmek istiyor musunuz?"),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              child: const Text(
-                "Vazgeç",
-                style: TextStyle(color: Colors.red),
-              )),
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: const Text("Tamam")),
-        ]);
-  }
-
   Widget transactionArea(BuildContext context, List<CariIslemModel> list) {
     // ignore: prefer_const_constructors
     return MyCard(
@@ -187,6 +194,33 @@ class HomeView extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text("Yeni İşlem"),
+              IconButton(
+                  onPressed: () async {
+                    var islem = await showCariIslemTuruDialog(context);
+                    if (islem == null) return;
+
+                    var cariKart = await getCariKartByPop(context);
+
+                    if (cariKart == null) return;
+
+                    goToView(context,
+                        viewToGo: const CariTransactionAddView(),
+                        viewModel: CariTransactionAddViewModel.addNewHareket(
+                            cariKart: cariKart, cariIslemTuru: islem));
+
+                    /**/
+                  },
+                  icon: const Icon(
+                    Icons.add_circle_outline_rounded,
+                  ))
+            ],
+          ),
+          const Divider(height: 5),
           if (list.isEmpty)
             const ListTile(
               title: Text("Veri yok"),
@@ -241,9 +275,10 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  incomingArea(BuildContext context, List<CariIslemModel> listTransactions,
+  incomingReportArea(
+      BuildContext context,
+      List<CariIslemModel> listTransactions,
       List<HesapHareketModel> listIncome) {
-  
     num gelir = 0, satis = 0;
 
     for (var item in listTransactions) {
@@ -396,7 +431,13 @@ class SiparisTile extends StatelessWidget {
                       const Text("Beklemede"),
                       CircleAvatar(
                         maxRadius: 10,
-                        backgroundColor: Colors.red.shade700,
+                        backgroundColor:
+                            (siparisModel.siparisTarihi?.toDate() ??
+                                            DateTime.now())
+                                        .compareTo(DateTime.now()) <
+                                    1
+                                ? Colors.red.shade700
+                                : Colors.orange[800],
                       )
                     ],
                   )

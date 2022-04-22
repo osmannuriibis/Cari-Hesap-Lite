@@ -28,15 +28,15 @@ class StokAddView extends StatelessWidget with Validator {
 
     return Scaffold(
       appBar: MyAppBar(
-        title: Text(
-            "Stok ${(_viewModelUnlistened.isNewAdding) ? "Ekle" : "Düzenle"}"),
+        titleText: 
+            "Stok ${(_viewModelUnlistened.isNewAdding) ? "Ekle" : "Düzenle"}",
       ),
       body: SingleChildScrollView(
         child: Form(
           key: _viewModel.formKey,
           child: Column(
             children: [
-              Label("Ürün Bilgileri"),
+              const Label("Ürün Bilgileri"),
               BaseBorderedTextField(
                 controller: _viewModelUnlistened.controllerStokAdi,
                 keyboardType: TextInputType.name,
@@ -252,139 +252,6 @@ class StokAddView extends StatelessWidget with Validator {
   }
 }
 
-/* class _RowForMiktarAndDepo extends StatelessWidget {
-  final int index;
-  StokAddViewModel viewModel;
-  StokAddViewModel viewModelUnlistened;
-
-  _RowForMiktarAndDepo({
-    Key? key,
-    required this.index,
-    required this.viewModel,
-    required this.viewModelUnlistened,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var list = viewModel.miktarList;
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            flex: 7,
-            child: BaseBorderedTextField(
-              divider: false,
-              /*  controller: _viewModelUnlistened
-                  .controllerBaslangicMiktari, */
-              inputFormatters: [DecimalTextInputFormatter()],
-              keyboardType: TextInputType.number,
-              labelText: "İlk Miktarı",
-              hintText: "",
-              initialValue:
-                  (index < list.length) ? list[index].value.toString() : null,
-              readOnly: (index == list.length) ? false : true,
-              controller: (index == list.length)
-                  ? (viewModel
-                      .controllerIlkMiktar /*  = TextEditingController() */)
-                  : null,
-            ),
-          ),
-        /*   Flexible(
-            flex: 7,
-            child: BaseBorderedTextField(
-              divider: false,
-              labelText: "Depo",
-              hintText: "",
-              controller:
-                  (index == list.length) ? (viewModel.controllerDepo) : null,
-              initialValue:
-                  (index < list.length) ? list[index].key.value : null,
-              readOnly: true,
-              onTap: (index == list.length)
-                  ? () {
-                      bas(viewModel.depoList);
-                      showAlertDialog<MapEntry<String, String>>(context,
-                          title: "Depo Seçiniz",
-                          content: viewModelUnlistened.depoList.isNotEmpty
-                              ? Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    for (var i = 0;
-                                        i < viewModel.depoList.length;
-                                        i++)
-                                      ListTile(
-                                        title:
-                                            Text(viewModel.depoList[i].value),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          viewModel.controllerDepo.text =
-                                              viewModel.depoList[i].value;
-                                          viewModel.selectedDepo = MapEntry(
-                                              viewModel.depoList[i].key,
-                                              viewModel.depoList[i].value);
-                                        },
-                                      )
-                                  ],
-                                )
-                              : MyFirestoreColList(
-                                  query:
-                                      DBUtils().getClassReference<DepoModel>(),
-                                  itemBuilder: (context, snapshot, index) {
-                                    // bas(snapshot.data());
-                                    if (snapshot == null) {
-                                      return const SizedBox.shrink();
-                                    } else {
-                                      bas("firebase ");
-                                      viewModel.depoList.add(MapEntry(
-                                          snapshot.data()["id"] ?? "",
-                                          snapshot.data()["adi"] ?? ""));
-                                      return ListTile(
-                                        title: Text(snapshot.get("adi")),
-                                        subtitle: Text((snapshot.data()["adres"]  ) ?? ""),
-                                        trailing: const Text("\$anaDepo"),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          viewModel.controllerDepo.text =
-                                              snapshot.get("adi") as String;
-                                          viewModel.selectedDepo = MapEntry(
-                                              snapshot.get("id") as String,
-                                              snapshot.get("adi") as String);
-                                        },
-                                      );
-                                    }
-                                  },
-                                ));
-                    }
-                  : null,
-            ),
-          ), */
-          Flexible(
-            flex: 3,
-            child: TextButton(
-              onPressed: () {
-                viewModelUnlistened.addOrDeleteMiktarFiled(index);
-              },
-              child: (index == list.length)
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                  : const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-            ),
-          ),
-          const SizedBox(
-            width: 8,
-          )
-        ],
-      ),
-    );
-  }
-} */
 
 class Label extends StatelessWidget {
   final String title;
@@ -509,7 +376,7 @@ Widget _financalArea(BuildContext context) {
 }
 
 Widget _customCard({
-  BuildContext? context,
+  
   required Widget child,
   double? widthBoxSize,
   required String labelText,

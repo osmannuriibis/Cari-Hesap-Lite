@@ -9,34 +9,26 @@ import 'package:cari_hesapp_lite/components/text_fields/base_form_field.dart';
 import 'package:cari_hesapp_lite/components/text_fields/rounded_text_field.dart';
 import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:cari_hesapp_lite/enums/route_names.dart';
-import 'package:cari_hesapp_lite/models/user_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
 import 'package:cari_hesapp_lite/services/firebase/storage/service/storage_service.dart';
 import 'package:cari_hesapp_lite/utils/image/image_util.dart';
 import 'package:cari_hesapp_lite/utils/my_view_progress_indicator.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
-import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/profile_view/profile_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
 
-import '../../utils/user_provider.dart';
-
+// ignore: must_be_immutable
 class ProfileView extends StatelessWidget {
   ProfileView({Key? key}) : super(key: key);
 
   late ProfileViewModel _viewModel;
-  late UserProvider _userProvider;
 
   @override
   Widget build(BuildContext context) {
     _viewModel = Provider.of<ProfileViewModel>(context);
-    _userProvider = Provider.of<UserProvider>(context);
 
     var user = _viewModel.user;
     var isEditing = _viewModel.isEditing;
@@ -108,8 +100,6 @@ class ProfileView extends StatelessWidget {
                                   child: const Icon(Icons.edit_outlined),
                                 ),
                                 onTap: () async {
-                                  _viewModel.isBottomOpen =
-                                      !_viewModel.isBottomOpen;
                                   File? image = await ImageUtil().getImage(
                                     context,
                                   );
@@ -120,7 +110,6 @@ class ProfileView extends StatelessWidget {
                                         _viewModel.userId,
                                         image,
                                         "pp.jpeg");
-                              
 
                                     DBUtils().addOrSetModel(
                                         user!.copyWith(photoURL: url));
@@ -181,10 +170,8 @@ class ProfileView extends StatelessWidget {
                             "Kaydet",
                             onPressed: () async {
                               await _viewModel.saveFields();
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  RouteNames.AuthWrapper.route,
-                                  (route) => false);
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  RouteNames.Login.route, (route) => false);
                             },
                           ))
                     ],

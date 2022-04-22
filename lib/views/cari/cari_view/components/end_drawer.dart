@@ -4,7 +4,6 @@ import 'package:cari_hesapp_lite/components/dialogs/show_alert_dialog.dart';
 import 'package:cari_hesapp_lite/constants/constants.dart';
 import 'package:cari_hesapp_lite/models/siparis_model.dart';
 import 'package:cari_hesapp_lite/services/firebase/database/utils/database_utils.dart';
-import 'package:cari_hesapp_lite/utils/print.dart';
 import 'package:cari_hesapp_lite/utils/view_route_util.dart';
 import 'package:cari_hesapp_lite/views/home_view/home_page.dart';
 import 'package:cari_hesapp_lite/views/siparis/siparis_add_view.dart';
@@ -13,8 +12,8 @@ import 'package:cari_hesapp_lite/views/siparis/siparis_add_view_model.dart';
 import '../../../../enums/cari_islem_turu.dart';
 import '../../../../enums/gelir_gider_turu.dart';
 import '../../../../enums/hesap_hareket_turu.dart';
-import '../../../account_transaction/add_account_transaction_view/add_cash_transaction_view.dart';
-import '../../../account_transaction/add_account_transaction_view/add_cash_transaction_view_model.dart';
+import '../../../account_transaction/add_account_transaction_view/account_transaction_add_view.dart';
+import '../../../account_transaction/add_account_transaction_view/account_transaction_add_view_model.dart';
 import '../cari_view_model.dart';
 import '../../../cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view.dart';
 import '../../../cari_transaction/transaction_adding_view/new_cari_trans_view/new_cari_trans_view_model.dart';
@@ -36,7 +35,7 @@ class CariViewEndDrawer extends StatelessWidget {
     viewModel = Provider.of<CariViewModel>(context);
     viewModelUnlistened = Provider.of<CariViewModel>(context, listen: false);
     return Drawer(
-      child: Container(
+      child: SizedBox(
         width: width(context) * 0.5,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
